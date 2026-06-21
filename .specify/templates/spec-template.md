@@ -77,6 +77,9 @@
 
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
+- What validation failures can occur from external input?
+- What domain errors must be represented explicitly?
+- What happens when a requested collection is too large or pagination parameters are invalid?
 
 ## Requirements *(mandatory)*
 
@@ -92,16 +95,24 @@
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+- **FR-006**: System MUST validate all external input before processing
+- **FR-007**: Public APIs MUST expose standardized success and error contracts
+- **FR-008**: Large collections MUST define pagination behavior
+- **FR-009**: Expected domain errors MUST be represented explicitly
 
 *Example of marking unclear requirements:*
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+- **FR-010**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
+- **FR-011**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
+
+### Public API Contracts *(include if feature exposes endpoints)*
+
+- **[Endpoint/Operation]**: [Request/response summary, validation outcomes, standardized error responses, and OpenAPI impact]
 
 ## Success Criteria *(mandatory)*
 

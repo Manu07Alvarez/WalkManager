@@ -1,0 +1,1180 @@
+openapi: 3.1.0
+info:
+  title: WalkManager Dog Walking Platform API
+  version: 0.1.0
+  description: Initial public API contract for authentication, walker profiles, search, bookings, chats, reviews, moderation, notifications, and media.
+servers:
+  - url: https://api.walkmanager.local
+paths:
+  /auth/register/walker:
+    post:
+      summary: Register a dog walker account
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterWalkerRequest'
+      responses:
+        '201':
+          description: Walker account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /auth/register/customer:
+    post:
+      summary: Register a customer account
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCustomerRequest'
+      responses:
+        '201':
+          description: Customer account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /auth/login:
+    post:
+      summary: Authenticate a user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/DomainError'
+  /users/me/contact:
+    put:
+      summary: Update current customer's email and phone
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContactRequest'
+      responses:
+        '200':
+          description: Contact information updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          $ref: '#/components/responses/DomainError'
+  /walkers/me/profile:
+    put:
+      summary: Update the authenticated walker's profile
+      tags: [WalkerProfiles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWalkerProfileRequest'
+      responses:
+        '200':
+          description: Walker profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalkerProfile'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          $ref: '#/components/responses/DomainError'
+  /walkers/search:
+    get:
+      summary: Search available dog walkers
+      tags: [Search]
+      parameters:
+        - $ref: '#/components/parameters/Neighborhood'
+        - $ref: '#/components/parameters/MaxDistanceKm'
+        - $ref: '#/components/parameters/AvailableFrom'
+        - $ref: '#/components/parameters/AvailableTo'
+        - $ref: '#/components/parameters/MinRating'
+        - $ref: '#/components/parameters/MaxPrice'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Matching walkers sorted by nearest distance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedWalkerSearchResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+  /walkers/{walkerId}:
+    get:
+      summary: View public walker profile
+      tags: [WalkerProfiles]
+      parameters:
+        - $ref: '#/components/parameters/WalkerId'
+      responses:
+        '200':
+          description: Public walker profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalkerProfile'
+        '404':
+          $ref: '#/components/responses/DomainError'
+  /bookings:
+    post:
+      summary: Create a pending booking request
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '201':
+          description: Pending booking created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /bookings/{bookingId}:
+    get:
+      summary: Get booking details
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        '200':
+          description: Booking details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '403':
+          $ref: '#/components/responses/DomainError'
+        '404':
+          $ref: '#/components/responses/DomainError'
+  /bookings/{bookingId}/accept:
+    post:
+      summary: Accept a pending booking atomically
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        '200':
+          description: Booking accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /bookings/{bookingId}/reject:
+    post:
+      summary: Reject a pending booking
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        '200':
+          description: Booking rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /bookings/{bookingId}/cancel:
+    post:
+      summary: Cancel an accepted booking before service completion
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelBookingRequest'
+      responses:
+        '200':
+          description: Booking cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /bookings/{bookingId}/result:
+    post:
+      summary: Report a service result for an accepted booking
+      tags: [ServiceResults]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportServiceResultRequest'
+      responses:
+        '200':
+          description: Result reported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /bookings/{bookingId}/result/confirm:
+    post:
+      summary: Confirm a reported service result
+      tags: [ServiceResults]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        '200':
+          description: Result confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+  /bookings/{bookingId}/result/dispute:
+    post:
+      summary: Dispute a reported service result
+      tags: [ServiceResults]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisputeResultRequest'
+      responses:
+        '200':
+          description: Result disputed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+  /inquiry-chats:
+    post:
+      summary: Start a public inquiry chat with a walker
+      tags: [Chats]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInquiryChatRequest'
+      responses:
+        '201':
+          description: Inquiry chat created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatConversation'
+        '429':
+          $ref: '#/components/responses/DomainError'
+  /inquiry-chats/{chatId}/messages:
+    get:
+      summary: List public inquiry chat messages
+      tags: [Chats]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ChatId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paged public inquiry chat messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedChatMessages'
+        '403':
+          $ref: '#/components/responses/DomainError'
+    post:
+      summary: Send a public inquiry chat message
+      tags: [Chats]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ChatId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '201':
+          description: Message persisted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+        '403':
+          $ref: '#/components/responses/DomainError'
+        '429':
+          $ref: '#/components/responses/DomainError'
+  /booking-chats/{bookingId}/messages:
+    get:
+      summary: List booking chat messages
+      tags: [Chats]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paged booking chat messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedChatMessages'
+    post:
+      summary: Send a booking chat message
+      tags: [Chats]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '201':
+          description: Message persisted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+  /bookings/{bookingId}/reviews:
+    post:
+      summary: Submit a moderated review for an eligible booking
+      tags: [Reviews]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReviewRequest'
+      responses:
+        '201':
+          description: Review submitted for moderation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /notifications:
+    get:
+      summary: List current user's notifications
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paged notifications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedNotifications'
+  /users/me/notification-preference:
+    get:
+      summary: Get current user's notification preference
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current notification preference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+    put:
+      summary: Update current user's notification preference
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNotificationPreferenceRequest'
+      responses:
+        '200':
+          description: Notification preference updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+  /moderation/reviews/{reviewId}/approve:
+    post:
+      summary: Approve a pending review
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ReviewId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationDecisionRequest'
+      responses:
+        '200':
+          description: Review approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /moderation/reviews/{reviewId}/reject:
+    post:
+      summary: Reject a pending review
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ReviewId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationDecisionRequest'
+      responses:
+        '200':
+          description: Review rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /moderation/disputes/{bookingId}/resolve:
+    post:
+      summary: Resolve a disputed service result
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveDisputeRequest'
+      responses:
+        '200':
+          description: Dispute resolved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+  /moderation/incidents:
+    get:
+      summary: List incident records for moderation
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paged incident records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedIncidentRecords'
+  /moderation/restrictions:
+    post:
+      summary: Apply account restriction or suspension
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyRestrictionRequest'
+      responses:
+        '201':
+          description: Restriction applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountRestriction'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /moderation/reports:
+    get:
+      summary: List moderation reports and work items
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paged moderation work items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedModeratorWorkItems'
+  /moderation/reports/{workItemId}/resolve:
+    post:
+      summary: Resolve a moderation report or work item
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WorkItemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveWorkItemRequest'
+      responses:
+        '200':
+          description: Work item resolved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModeratorWorkItem'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/DomainError'
+  /moderation/restrictions/{restrictionId}/lift:
+    post:
+      summary: Lift an active account restriction or suspension
+      tags: [Moderation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RestrictionId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationDecisionRequest'
+      responses:
+        '200':
+          description: Restriction lifted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountRestriction'
+        '409':
+          $ref: '#/components/responses/DomainError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    WalkerId:
+      name: walkerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BookingId:
+      name: bookingId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ChatId:
+      name: chatId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ReviewId:
+      name: reviewId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    WorkItemId:
+      name: workItemId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    RestrictionId:
+      name: restrictionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Neighborhood:
+      name: neighborhood
+      in: query
+      schema:
+        type: string
+    MaxDistanceKm:
+      name: maxDistanceKm
+      in: query
+      schema:
+        type: number
+        minimum: 0
+    AvailableFrom:
+      name: availableFrom
+      in: query
+      schema:
+        type: string
+        format: date-time
+    AvailableTo:
+      name: availableTo
+      in: query
+      schema:
+        type: string
+        format: date-time
+    MinRating:
+      name: minRating
+      in: query
+      schema:
+        type: number
+        minimum: 0
+        maximum: 5
+    MaxPrice:
+      name: maxPrice
+      in: query
+      schema:
+        type: number
+        minimum: 0
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    ValidationError:
+      description: Input validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    DomainError:
+      description: Domain or authorization rule failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    RegisterWalkerRequest:
+      type: object
+      required: [fullName, email, phoneNumber, cuil, password, identityPhoto]
+      properties:
+        fullName: { type: string }
+        email: { type: string, format: email }
+        phoneNumber: { type: string }
+        cuil: { type: string }
+        password: { type: string, format: password }
+        identityPhoto:
+          type: string
+          format: binary
+    RegisterCustomerRequest:
+      type: object
+      required: [fullName, email, phoneNumber, cuil, password]
+      properties:
+        fullName: { type: string }
+        email: { type: string, format: email }
+        phoneNumber: { type: string }
+        cuil: { type: string }
+        password: { type: string, format: password }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+    UpdateContactRequest:
+      type: object
+      required: [email, phoneNumber]
+      properties:
+        email: { type: string, format: email }
+        phoneNumber: { type: string }
+    AuthResponse:
+      type: object
+      required: [accessToken, user]
+      properties:
+        accessToken: { type: string }
+        user:
+          $ref: '#/components/schemas/UserSummary'
+    UserSummary:
+      type: object
+      required: [id, role, fullName, email]
+      properties:
+        id: { type: string, format: uuid }
+        role:
+          type: string
+          enum: [DogWalker, Customer, Moderator]
+        fullName: { type: string }
+        email: { type: string, format: email }
+    UpdateWalkerProfileRequest:
+      type: object
+      required: [publicDescription, usualDogTypes, maxSimultaneousDogs, servicePrice, serviceZoneId]
+      properties:
+        publicDescription: { type: string }
+        usualDogTypes:
+          type: array
+          items: { type: string }
+        maxSimultaneousDogs:
+          type: integer
+          minimum: 1
+        servicePrice:
+          type: number
+          minimum: 0
+        serviceZoneId:
+          type: string
+          format: uuid
+    WalkerProfile:
+      type: object
+      required: [id, fullName, publicDescription, maxSimultaneousDogs, servicePrice, rating, serviceZone]
+      properties:
+        id: { type: string, format: uuid }
+        fullName: { type: string }
+        publicDescription: { type: string }
+        usualDogTypes:
+          type: array
+          items: { type: string }
+        maxSimultaneousDogs: { type: integer }
+        servicePrice: { type: number }
+        rating: { type: number }
+        reviewCount: { type: integer }
+        serviceZone:
+          $ref: '#/components/schemas/NeighborhoodZone'
+    NeighborhoodZone:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        distanceKm: { type: number }
+    PagedWalkerSearchResponse:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WalkerProfile'
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    CreateBookingRequest:
+      type: object
+      required: [walkerId, neighborhoodZoneId, scheduledStart, scheduledEnd, timezone, dogCount]
+      properties:
+        walkerId: { type: string, format: uuid }
+        neighborhoodZoneId: { type: string, format: uuid }
+        scheduledStart: { type: string, format: date-time }
+        scheduledEnd: { type: string, format: date-time }
+        timezone: { type: string }
+        dogCount:
+          type: integer
+          minimum: 1
+    Booking:
+      type: object
+      required: [id, customerId, walkerId, scheduledStart, scheduledEnd, dogCount, bookingStatus]
+      properties:
+        id: { type: string, format: uuid }
+        customerId: { type: string, format: uuid }
+        walkerId: { type: string, format: uuid }
+        scheduledStart: { type: string, format: date-time }
+        scheduledEnd: { type: string, format: date-time }
+        timezone: { type: string }
+        dogCount: { type: integer }
+        bookingStatus:
+          $ref: '#/components/schemas/BookingStatus'
+        serviceResult:
+          $ref: '#/components/schemas/ServiceResult'
+        finalizedAt:
+          type: string
+          format: date-time
+          nullable: true
+    BookingStatus:
+      type: string
+      enum: [Pending, Accepted, Rejected, Expired, Cancelled]
+    ServiceResult:
+      type: string
+      enum: [Successful, CustomerAbsent, WalkerAbsent, Failed, Disputed]
+    CancelBookingRequest:
+      type: object
+      properties:
+        reason: { type: string }
+    ReportServiceResultRequest:
+      type: object
+      required: [serviceResult]
+      properties:
+        serviceResult:
+          type: string
+          enum: [Successful, CustomerAbsent, WalkerAbsent, Failed]
+        incidentDescription: { type: string }
+    DisputeResultRequest:
+      type: object
+      properties:
+        reason: { type: string }
+    ResolveDisputeRequest:
+      type: object
+      required: [resolvedResult]
+      properties:
+        resolvedResult:
+          type: string
+          enum: [Successful, CustomerAbsent, WalkerAbsent, Failed]
+        moderationNotes: { type: string }
+    CreateInquiryChatRequest:
+      type: object
+      required: [walkerId, initialMessage]
+      properties:
+        walkerId: { type: string, format: uuid }
+        initialMessage: { type: string }
+    ChatConversation:
+      type: object
+      required: [id, type]
+      properties:
+        id: { type: string, format: uuid }
+        type:
+          type: string
+          enum: [PublicInquiry, Booking]
+        bookingId:
+          type: string
+          format: uuid
+          nullable: true
+    SendMessageRequest:
+      type: object
+      required: [body]
+      properties:
+        body: { type: string }
+    ChatMessage:
+      type: object
+      required: [id, senderUserId, body, sentAt]
+      properties:
+        id: { type: string, format: uuid }
+        senderUserId: { type: string, format: uuid }
+        body: { type: string }
+        sentAt: { type: string, format: date-time }
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+    PagedChatMessages:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    CreateReviewRequest:
+      type: object
+      required: [rating, comment]
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment: { type: string }
+    Review:
+      type: object
+      required: [id, bookingId, rating, comment, moderationStatus]
+      properties:
+        id: { type: string, format: uuid }
+        bookingId: { type: string, format: uuid }
+        rating: { type: integer }
+        comment: { type: string }
+        moderationStatus:
+          type: string
+          enum: [Pending, Approved, Rejected]
+    ModerationDecisionRequest:
+      type: object
+      properties:
+        notes: { type: string }
+    PagedNotifications:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    NotificationPreference:
+      type: object
+      required: [channel]
+      properties:
+        channel:
+          type: string
+          enum: [Email, PhoneMessaging]
+    UpdateNotificationPreferenceRequest:
+      type: object
+      required: [channel]
+      properties:
+        channel:
+          type: string
+          enum: [Email, PhoneMessaging]
+    Notification:
+      type: object
+      required: [id, type, channel, status, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string }
+        channel:
+          type: string
+          enum: [Email, PhoneMessaging]
+        status:
+          type: string
+          enum: [Pending, Sent, Failed]
+        createdAt: { type: string, format: date-time }
+    IncidentRecord:
+      type: object
+      required: [id, userAccountId, incidentType, severity, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        userAccountId: { type: string, format: uuid }
+        bookingId:
+          type: string
+          format: uuid
+          nullable: true
+        incidentType:
+          type: string
+          enum: [NoShow, LateCancellation, DisputedService, RepeatedFailure, RepeatedRejection]
+        severity:
+          type: string
+          enum: [Low, Medium, High]
+        description: { type: string }
+        createdAt: { type: string, format: date-time }
+        resolvedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PagedIncidentRecords:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncidentRecord'
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    ModeratorWorkItem:
+      type: object
+      required: [id, workItemType, status, summary, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        workItemType:
+          type: string
+          enum: [Report, DisputedService, RestrictionReview, SuspensionReview, ReviewModeration]
+        status:
+          type: string
+          enum: [Open, Assigned, Resolved]
+        subjectUserAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        relatedBookingId:
+          type: string
+          format: uuid
+          nullable: true
+        relatedReviewId:
+          type: string
+          format: uuid
+          nullable: true
+        assignedModeratorUserId:
+          type: string
+          format: uuid
+          nullable: true
+        summary: { type: string }
+        resolutionNotes:
+          type: string
+          nullable: true
+        createdAt: { type: string, format: date-time }
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
+        resolvedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PagedModeratorWorkItems:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModeratorWorkItem'
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    ResolveWorkItemRequest:
+      type: object
+      required: [resolutionNotes]
+      properties:
+        resolutionNotes: { type: string }
+        resolvedServiceResult:
+          type: string
+          enum: [Successful, CustomerAbsent, WalkerAbsent, Failed]
+          nullable: true
+    ApplyRestrictionRequest:
+      type: object
+      required: [userAccountId, restrictionType, reason, startsAt]
+      properties:
+        userAccountId: { type: string, format: uuid }
+        restrictionType:
+          type: string
+          enum: [Warning, ReducedBookingCapabilities, VisibilityReduction, MessagingRestriction, TemporarySuspension]
+        reason: { type: string }
+        startsAt: { type: string, format: date-time }
+        endsAt:
+          type: string
+          format: date-time
+          nullable: true
+    AccountRestriction:
+      type: object
+      required: [id, userAccountId, restrictionType, reason, startsAt, isActive]
+      properties:
+        id: { type: string, format: uuid }
+        userAccountId: { type: string, format: uuid }
+        restrictionType:
+          type: string
+          enum: [Warning, ReducedBookingCapabilities, VisibilityReduction, MessagingRestriction, TemporarySuspension]
+        reason: { type: string }
+        startsAt: { type: string, format: date-time }
+        endsAt:
+          type: string
+          format: date-time
+          nullable: true
+        isActive: { type: boolean }
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          examples:
+            - CUIL_ALREADY_REGISTERED
+            - WALKER_UNAVAILABLE
+            - BOOKING_CAPACITY_EXCEEDED
+            - INVALID_BOOKING_STATUS_TRANSITION
+            - INVALID_SERVICE_RESULT_TRANSITION
+            - ACCOUNT_RESTRICTED
+            - REVIEW_NOT_ALLOWED
+        message: { type: string }
+        details:
+          type: object
+          additionalProperties: true

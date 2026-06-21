@@ -1,0 +1,14 @@
+[package]
+name = "walkmanager-infrastructure"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+tokio.workspace = true
+sea-orm = { version = "0.12", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
+sea-orm-migration = "0.12"
+sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-rustls"] }
+
+[dev-dependencies]
+tokio.workspace = true
