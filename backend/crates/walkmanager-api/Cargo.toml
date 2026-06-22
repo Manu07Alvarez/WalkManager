@@ -10,11 +10,14 @@ tokio.workspace = true
 axum = "0.7"
 tower = "0.4"
 tower-http = "0.5"
-jsonwebtoken = "9.0"
+jsonwebtoken = { version = "9.0", features = ["pem"] }
 axum-extra = "0.9"
 utoipa = { version = "4.0", features = ["axum_extras"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { workspace = true, features = ["v4"] }
+thiserror.workspace = true
 
 [dev-dependencies]
 tokio.workspace = true

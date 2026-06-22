@@ -7,6 +7,9 @@ edition.workspace = true
 serde.workspace = true
 async-trait.workspace = true
 time.workspace = true
+uuid = { workspace = true, features = ["v4"] }
+walkmanager-domain = { path = "../walkmanager-domain" }
+bcrypt.workspace = true
 
 [dev-dependencies]
 tokio.workspace = true

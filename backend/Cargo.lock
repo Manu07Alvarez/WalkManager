@@ -269,6 +269,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
+name = "bcrypt"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e65938ed058ef47d92cf8b346cc76ef48984572ade631927e9937b5ffc7662c7"
+dependencies = [
+ "base64 0.22.1",
+ "blowfish",
+ "getrandom 0.2.17",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
 name = "bigdecimal"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -307,6 +320,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
 dependencies = [
  "generic-array",
+]
+
+[[package]]
+name = "blowfish"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e412e2cd0f2b2d93e02543ceae7917b3c70331573df19ee046bcbc35e45e87d7"
+dependencies = [
+ "byteorder",
+ "cipher",
 ]
 
 [[package]]
@@ -402,9 +425,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
 dependencies = [
  "iana-time-zone",
+ "js-sys",
  "num-traits",
  "serde",
+ "wasm-bindgen",
  "windows-link",
+]
+
+[[package]]
+name = "cipher"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
+dependencies = [
+ "crypto-common",
+ "inout",
 ]
 
 [[package]]
@@ -1181,6 +1216,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.117",
+]
+
+[[package]]
+name = "inout"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "879f10e63c20629ecabbb64a8010319738c66a5cd0c29b02d63d272b03751d01"
+dependencies = [
+ "generic-array",
 ]
 
 [[package]]
@@ -3058,6 +3102,7 @@ version = "1.23.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d258b83ceec21034727ecee8c382cfa6c3e133699b0742c64571814fb420c9f7"
 dependencies = [
+ "getrandom 0.4.2",
  "js-sys",
  "serde_core",
  "wasm-bindgen",
@@ -3087,15 +3132,18 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "axum-extra",
+ "chrono",
  "jsonwebtoken",
  "serde",
  "serde_json",
+ "thiserror 1.0.69",
  "tokio",
  "tower 0.4.13",
  "tower-http",
  "tracing",
  "tracing-subscriber",
  "utoipa",
+ "uuid",
 ]
 
 [[package]]
@@ -3103,9 +3151,12 @@ name = "walkmanager-application"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "bcrypt",
  "serde",
  "time",
  "tokio",
+ "uuid",
+ "walkmanager-domain",
 ]
 
 [[package]]
@@ -3116,17 +3167,20 @@ dependencies = [
  "thiserror 1.0.69",
  "time",
  "tokio",
+ "uuid",
 ]
 
 [[package]]
 name = "walkmanager-infrastructure"
 version = "0.1.0"
 dependencies = [
+ "bcrypt",
  "sea-orm",
  "sea-orm-migration",
  "serde",
  "sqlx",
  "tokio",
+ "uuid",
 ]
 
 [[package]]

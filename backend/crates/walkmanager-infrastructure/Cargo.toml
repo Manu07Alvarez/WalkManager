@@ -6,6 +6,8 @@ edition.workspace = true
 [dependencies]
 serde.workspace = true
 tokio.workspace = true
+uuid = { workspace = true, features = ["v4"] }
+bcrypt.workspace = true
 sea-orm = { version = "0.12", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
 sea-orm-migration = "0.12"
 sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-rustls"] }

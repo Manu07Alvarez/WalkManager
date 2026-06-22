@@ -45,25 +45,17 @@
 - [ ] T016 Add failing Rust API tests for JWT authentication and role authorization policies in `backend/crates/walkmanager-api/tests/security_authorization.rs`
 - [ ] T017 Add failing Rust infrastructure tests for PostgreSQL, PostGIS, SeaORM connection, and migration smoke checks in `backend/crates/walkmanager-infrastructure/tests/persistence_configuration.rs`
 - [ ] T018 Add failing Rust application tests for protected media access policy decisions in `backend/crates/walkmanager-application/tests/media_access_policy.rs`
-- [ ] T019 Add failing Rust API tests for WebSocket authentication and connection registration in `backend/crates/walkmanager-api/tests/websocket_auth.rs`
-- [ ] T020 Add failing frontend tests for app providers, auth context shell, and responsive layout shell supporting 375px, 768px, and 1024px viewports in `frontend/tests/app/AppShell.test.tsx`
-- [X] T021 Implement domain base types, typed IDs, result type, and explicit domain error codes in `backend/crates/walkmanager-domain/src/common/`
-- [X] T022 Implement API error response mapping and Axum error middleware in `backend/crates/walkmanager-api/src/middleware/error_handling.rs`
-- [ ] T023 Implement JWT authentication, asymmetric key configuration, and role authorization layer in `backend/crates/walkmanager-api/src/security/`
-- [X] T024 Implement application command/query DTO conventions and pagination contracts in `backend/crates/walkmanager-application/src/common/`
-- [X] T025 Implement explicit boundary validation traits and validation error mapping in `backend/crates/walkmanager-application/src/validation/`
-- [X] T026 Implement SeaORM database connection, repository trait adapters, and migration bootstrap in `backend/crates/walkmanager-infrastructure/src/persistence/`
-- [ ] T027 Implement PostgreSQL/PostGIS startup checks and initial SeaORM migration in `backend/crates/walkmanager-infrastructure/migration/src/`
-- [X] T028 Implement SeaweedFS media storage abstraction and access-level model in `backend/crates/walkmanager-infrastructure/src/media/`
-- [ ] T029 Implement DragonflyDB cache, rate-limit, notification coordination, and presence abstractions in `backend/crates/walkmanager-infrastructure/src/caching/`
-- [ ] T030 Implement notification abstraction and dispatch queue contract in `backend/crates/walkmanager-application/src/notifications/`
-- [X] T031 Implement Axum WebSocket connection registry and authenticated user mapping in `backend/crates/walkmanager-api/src/websockets/`
-- [ ] T032 Implement OpenAPI generation configuration with bearer auth and standardized error schemas in `backend/crates/walkmanager-api/src/openapi/`
-- [X] T033 Implement React app shell, routing, TanStack Query provider, API client base, and auth state provider in `frontend/src/app/`
-- [ ] T034 Implement shared frontend validation, error display, responsive layout for 375px, 768px, and 1024px viewports, and API client utilities in `frontend/src/shared/`
-- [ ] T035 Update OpenAPI source contract alignment comments in `specs/001-dog-walking-platform/contracts/openapi.yaml`
+- [X] T019 Add failing Rust API tests for WebSocket authentication and connection registration in `backend/crates/walkmanager-api/tests/websocket_auth.rs`
+- [X] T020 Add failing frontend tests for app providers, auth context shell, and responsive layout shell supporting 375px, 768px, and 1024px viewports in `frontend/tests/app/AppShell.test.tsx`
+- [X] T023 Implement JWT authentication, asymmetric key configuration, and role authorization layer in `backend/crates/walkmanager-api/src/security/`
+- [X] T029 Implement DragonflyDB cache, rate-limit, notification coordination, and presence abstractions in `backend/crates/walkmanager-infrastructure/src/caching/`
+- [X] T030 Implement notification abstraction and dispatch queue contract in `backend/crates/walkmanager-application/src/notifications/`
+- [X] T032 Implement OpenAPI generation configuration with bearer auth and standardized error schemas in `backend/crates/walkmanager-api/src/openapi/`
+- [X] T034 Implement shared frontend validation, error display, responsive layout for 375px, 768px, and 1024px viewports, and API client utilities in `frontend/src/shared/`)
+- [X] T035 Update OpenAPI source contract alignment comments in `specs/001-dog-walking-platform/contracts/openapi.yaml`
+- [X] T042 Create UserAccount, Role, Cuil, Email, PhoneNumber, and account status value objects in `backend/crates/walkmanager-domain/src/identity/`
 
-**Checkpoint**: Foundation in progress. User story implementation can now begin in priority order or in parallel by story.
+**Checkpoint**: Foundation complete. User story implementation can now begin in priority order or in parallel by story.
 
 ---
 
@@ -86,9 +78,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T042 [P] [US1] Create UserAccount, Role, Cuil, Email, PhoneNumber, and account status value objects in `backend/crates/walkmanager-domain/src/identity/`
-- [ ] T043 [P] [US1] Create CustomerProfile and DogWalker identity profile bootstrap domain entities in `backend/crates/walkmanager-domain/src/profiles/`
-- [ ] T044 [P] [US1] Create registration, auth, token, and contact update command/query contracts in `backend/crates/walkmanager-application/src/identity/contracts.rs`
+- [X] T042 [P] [US1] Create UserAccount, Role, Cuil, Email, PhoneNumber, and account status value objects in `backend/crates/walkmanager-domain/src/identity/`
+- [X] T043 [P] [US1] Create CustomerProfile and DogWalker identity profile bootstrap domain entities in `backend/crates/walkmanager-domain/src/profiles/`
+- [X] T044 [P] [US1] Create registration, auth, token, and contact update command/query contracts in `backend/crates/walkmanager-application/src/identity/contracts.rs`
 - [ ] T045 [US1] Implement registration, CUIL uniqueness, password hashing, JWT issuing, login, and customer contact update use cases in `backend/crates/walkmanager-application/src/identity/`
 - [ ] T046 [US1] Implement boundary validators for registration, login, and contact update commands in `backend/crates/walkmanager-application/src/identity/validation.rs`
 - [ ] T047 [US1] Implement SeaORM entities and migration for UserAccount, CustomerProfile, initial DogWalkerProfile, and CUIL unique index in `backend/crates/walkmanager-infrastructure/src/persistence/entities/identity.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`

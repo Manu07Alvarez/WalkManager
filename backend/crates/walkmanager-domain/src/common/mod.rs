@@ -1,19 +1,14 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
-pub trait DomainError: Debug + thiserror::Error {}
+pub trait DomainError: Debug + std::error::Error {}
 
 pub trait ValueObject: Debug + Clone + PartialEq + Eq + Serialize + for<'de> Deserialize<'de> {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct TypedId<T>(uuid::Uuid)
-where
-    T: Debug;
+pub struct TypedId(pub uuid::Uuid);
 
-impl<T> TypedId<T>
-where
-    T: Debug,
-{
+impl TypedId {
     pub fn new() -> Self {
         Self(uuid::Uuid::new_v4())
     }
@@ -23,10 +18,7 @@ where
     }
 }
 
-impl<T> Default for TypedId<T>
-where
-    T: Debug,
-{
+impl Default for TypedId {
     fn default() -> Self {
         Self::new()
     }
