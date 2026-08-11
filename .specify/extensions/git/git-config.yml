@@ -60,3 +60,19 @@ auto_commit:
   after_taskstoissues:
     enabled: false
     message: "[Spec Kit] Sync tasks to issues"
+
+# Pull Request & Branch Isolation Configuration
+pull_request:
+  enabled: true
+  base_branch: main
+  auto_push: true
+  require_isolated_branch: true
+  conventions:
+    - feature
+    - bug
+    - fix
+    - todo
+    - refactor
+    - docs
+  include_todo_tree_audit: true
+

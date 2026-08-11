@@ -9,7 +9,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::auth::{verify_token, Claims};
+use super::auth::verify_token;
 use crate::middleware::error_handling::{ErrorDetail, ErrorResponse};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -83,6 +83,7 @@ where
 }
 
 pub fn require_role(expected: &str) -> impl Fn(AuthContext) -> Result<AuthContext, Response> {
+    let expected = expected.to_string();
     move |ctx| {
         if ctx.role == expected || ctx.role == "Moderator" {
             Ok(ctx)

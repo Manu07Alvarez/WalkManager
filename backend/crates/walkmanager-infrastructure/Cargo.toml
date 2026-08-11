@@ -9,7 +9,7 @@ tokio.workspace = true
 uuid = { workspace = true, features = ["v4"] }
 bcrypt.workspace = true
 sea-orm = { version = "0.12", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
-sea-orm-migration = "0.12"
+sea-orm-migration.workspace = true
 sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-rustls"] }
 
 [dev-dependencies]

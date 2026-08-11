@@ -31,7 +31,13 @@ If the user explicitly provided `GIT_BRANCH_NAME` (e.g., via environment variabl
 - Verify Git is available by running `git rev-parse --is-inside-work-tree 2>/dev/null`
 - If Git is not available, warn the user and skip branch creation
 
-## Branch Numbering Mode
+## Branch Naming & Prefix Mode
+
+Branch names follow standard work type prefixes combined with sequential/timestamp numbering or short names:
+- `feature/<num>-<short-name>` (or `<num>-<short-name>`): New features
+- `bug/<short-name>`: Bug fixes
+- `fix/<short-name>`: Patch fixes
+- `todo/<short-name>`: Technical debt or TODO items
 
 Determine the branch numbering strategy by checking configuration in this order:
 
@@ -68,5 +74,5 @@ If Git is not installed or the current directory is not a Git repository:
 ## Output
 
 The script outputs JSON with:
-- `BRANCH_NAME`: The branch name (e.g., `003-user-auth` or `20260319-143022-user-auth`)
+- `BRANCH_NAME`: The branch name (e.g., `003-user-auth` or `feature/003-user-auth`)
 - `FEATURE_NUM`: The numeric or timestamp prefix used

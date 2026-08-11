@@ -1,4 +1,4 @@
-use crate::identity::{contracts::*, UserAccountData, UserRepositoryError};
+use crate::identity::{contracts::AuthToken, UserAccountData};
 use async_trait::async_trait;
 use uuid::Uuid;
 

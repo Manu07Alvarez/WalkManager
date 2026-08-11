@@ -23,7 +23,10 @@ pub struct Cuil(String);
 
 impl Cuil {
     pub fn new(value: String) -> Result<Self, &'static str> {
-        if value.len() != 13 || !value.chars().nth(2) == Some('-') || !value.chars().nth(11) == Some('-') {
+        if value.len() != 13
+            || value.chars().nth(2) != Some('-')
+            || value.chars().nth(11) != Some('-')
+        {
             return Err("CUIL must be in format XX-XXXXXXXX-X");
         }
         Ok(Self(value))

@@ -24,7 +24,7 @@ impl Default for TypedId {
     }
 }
 
-pub type Result<T> = std::result::Result<T, DomainError>;
+pub type Result<T> = std::result::Result<T, Box<dyn DomainError + Send + Sync>>;
 
 pub mod error_codes {
     pub const INVALID_CUIL: &str = "INVALID_CUIL";

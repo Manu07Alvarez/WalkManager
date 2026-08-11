@@ -1,6 +1,4 @@
-use axum::{Json, Router};
-use serde_json::json;
-use utoipa::path;
+use axum::Router;
 
 pub fn auth_routes() -> Router {
     Router::new()

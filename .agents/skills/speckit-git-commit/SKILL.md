@@ -1,53 +1,85 @@
 ---
 name: speckit-git-commit
-description: Auto-commit changes after a Spec Kit command completes
+description: Commit changes on an isolated branch with standard naming conventions (FEATURE, BUG, FIX, TODO) and create a Pull Request upon completion
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
   source: git:commands/speckit.git.commit.md
 ---
 
-# Auto-Commit Changes
+# Commit & Create Pull Request
 
-Automatically stage and commit all changes after a Spec Kit command completes.
+Explicitly stage changes, ensure execution on an isolated branch matching the work type (`feature/`, `bug/`, `fix/`, `todo/`, `refactor/`, `docs/`), commit changes, push to origin, and create a Pull Request (PR).
 
-## Behavior
+## User Input
 
-This command is invoked as a hook after (or before) core commands. It:
+```text
+$ARGUMENTS
+```
 
-1. Determines the event name from the hook context (e.g., if invoked as an `after_specify` hook, the event is `after_specify`; if `before_plan`, the event is `before_plan`)
-2. Checks `.specify/extensions/git/git-config.yml` for the `auto_commit` section
-3. Looks up the specific event key to see if auto-commit is enabled
-4. Falls back to `auto_commit.default` if no event-specific key exists
-5. Uses the per-command `message` if configured, otherwise a default message
-6. If enabled and there are uncommitted changes, runs `git add .` + `git commit`
+Accept optional arguments:
+- Branch type: `feature`, `bug`, `fix`, `todo`, `refactor`, `docs`
+- Short title or message (e.g. `/speckit-git-commit fix/jwt-token-refresh "Fix expired JWT token handling"`)
+
+## Branch Naming Conventions
+
+When creating or checking out an isolated branch for the PR, enforce one of the following standard prefix conventions:
+
+- `feature/<short-name>` or `FEATURE/<short-name>`: New feature implementations or enhancements.
+- `bug/<short-name>` or `BUG/<short-name>`: Bug fixes and issue resolutions.
+- `fix/<short-name>` or `FIX/<short-name>`: Quick hotfixes, patch fixes, or urgent corrections.
+- `todo/<short-name>` or `TODO/<short-name>`: Technical debt, refactoring pending items, or TODO-TREE tag cleanups.
+- `refactor/<short-name>`: Architectural cleanups and refactoring without changing functionality.
+- `docs/<short-name>`: Documentation updates and specification docs.
+
+If the current branch does not have one of these prefixes and is `main` or `master`, prompt to create and switch to an isolated branch with the correct prefix before pushing.
+
+## TODO-TREE Integration Audit
+
+Before committing and opening the PR, scan modified files for TODO-TREE tags:
+- `TODO:` - Future tasks or missing functionality
+- `FIXME:` - Known issues requiring resolution
+- `BUG:` - Identified bug behaviors
+- `HACK:` - Temporary workarounds
+- `XXX:` - Critical code smells or warnings
+- `REVIEW:` - Code sections needing peer review
+
+Include a summary of detected TODO-TREE tags in the PR body description so unresolved marks remain tracked.
 
 ## Execution
 
-Determine the event name from the hook that triggered this command, then run the script:
+To stage, commit, push, and open a Pull Request:
 
-- **Bash**: `.specify/extensions/git/scripts/bash/auto-commit.sh <event_name>`
-- **PowerShell**: `.specify/extensions/git/scripts/powershell/auto-commit.ps1 <event_name>`
+- **PowerShell**: `.specify/extensions/git/scripts/powershell/create-pr.ps1 -Type "<type>" -Title "<title>" -Description "<description>"`
+- **Bash**: `.specify/extensions/git/scripts/bash/create-pr.sh --type "<type>" --title "<title>" --description "<description>"`
 
-Replace `<event_name>` with the actual hook event (e.g., `after_specify`, `before_plan`, `after_implement`).
+If the GitHub CLI (`gh`) is installed and authenticated:
+- Automatically runs `gh pr create --base main --head <branch-name> --title "<title>" --body "<body>"`
+
+If `gh` CLI is not installed or available:
+- Pushes the branch to `origin` (`git push -u origin <branch-name>`)
+- Displays the formatted PR Markdown template and a direct link to create the PR manually on GitHub.
 
 ## Configuration
 
 In `.specify/extensions/git/git-config.yml`:
 
 ```yaml
-auto_commit:
-  default: false          # Global toggle — set true to enable for all commands
-  after_specify:
-    enabled: true          # Override per-command
-    message: "[Spec Kit] Add specification"
-  after_plan:
-    enabled: false
-    message: "[Spec Kit] Add implementation plan"
+pull_request:
+  enabled: true
+  base_branch: main
+  auto_push: true
+  require_isolated_branch: true
+  conventions:
+    - feature
+    - bug
+    - fix
+    - todo
+    - refactor
+    - docs
 ```
 
 ## Graceful Degradation
 
-- If Git is not available or the current directory is not a repository: skips with a warning
-- If no config file exists: skips (disabled by default)
-- If no changes to commit: skips with a message
+- If Git is not available or the current directory is not a repository: skips with a warning.
+- If no changes to commit and branch is already pushed: prompts user whether to create PR for existing commits.

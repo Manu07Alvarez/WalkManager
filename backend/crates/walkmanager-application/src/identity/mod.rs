@@ -3,9 +3,7 @@ pub mod use_cases;
 pub mod repositories;
 
 pub use contracts::*;
-pub use use_cases::*;
-
-use crate::common::contracts::pagination::PaginatedResult;
+pub use use_cases::{ContactUpdateCommand, IdentityError, IdentityUseCase, LoginQuery};
 
 #[async_trait::async_trait]
 pub trait UserAccountRepository: Send + Sync {
