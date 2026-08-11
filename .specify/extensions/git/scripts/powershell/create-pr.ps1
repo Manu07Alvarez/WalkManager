@@ -61,6 +61,21 @@ if (-not $isRepo) {
     exit 1
 }
 
+# Auto-detect remote default branch if BaseBranch is 'main'
+if ($BaseBranch -eq 'main') {
+    $savedEAP = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $symbolicRef = (git symbolic-ref refs/remotes/origin/HEAD 2>$null).Trim()
+        if ($symbolicRef -match 'refs/remotes/origin/(.+)$') {
+            $BaseBranch = $matches[1]
+        }
+    } catch {}
+    finally {
+        $ErrorActionPreference = $savedEAP
+    }
+}
+
 # Determine current branch
 $currentBranch = ''
 $savedEAP = $ErrorActionPreference
