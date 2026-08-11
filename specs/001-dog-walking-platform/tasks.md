@@ -49,36 +49,6 @@
 
 **Goal**: Dog walkers can manage public profile details, pricing, working hours, availability, service zone, photos, and simultaneous dog capacity.
 
-**Independent Test**: Create a walker profile with pricing, description, dog types, capacity, schedule, and zone, then view the public profile as a customer.
-
-### Tests for User Story 2
-
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T054 [P] [US2] Add OpenAPI contract tests for `/walkers/me/profile` and `/walkers/{walkerId}` in `backend/crates/walkmanager-api/tests/walker_profile_contract.rs`
-- [ ] T055 [P] [US2] Add Rust domain tests for walker capacity, public profile, and capacity-change conflict notification rules in `backend/crates/walkmanager-domain/tests/profile_dog_walker.rs`
-- [ ] T056 [P] [US2] Add Rust application tests for profile update and public profile retrieval in `backend/crates/walkmanager-application/tests/walker_profile_use_cases.rs`
-- [ ] T057 [P] [US2] Add Rust validation tests for profile, pricing, schedule, capacity, and zone inputs in `backend/crates/walkmanager-application/tests/walker_profile_validation.rs`
-- [ ] T058 [P] [US2] Add SeaORM repository tests for walker profile, availability schedules, media references, and neighborhood zone references in `backend/crates/walkmanager-infrastructure/tests/walker_profile_repository.rs`
-- [ ] T059 [P] [US2] Add frontend feature tests for walker profile management in `frontend/tests/features/walker-profile/WalkerProfileManagement.test.tsx`
-
-### Implementation for User Story 2
-
-- [ ] T060 [P] [US2] Extend DogWalkerProfile, AvailabilitySchedule, MediaAsset, and NeighborhoodZone domain models in `backend/crates/walkmanager-domain/src/profiles/` and `backend/crates/walkmanager-domain/src/scheduling/`
-- [ ] T061 [P] [US2] Create walker profile and schedule command/query contracts in `backend/crates/walkmanager-application/src/profiles/contracts.rs`
-- [ ] T062 [US2] Implement walker profile update and public profile query use cases in `backend/crates/walkmanager-application/src/profiles/`
-- [ ] T063 [US2] Implement walker profile, schedule, pricing, capacity, and media validators in `backend/crates/walkmanager-application/src/profiles/validation.rs`
-- [ ] T064 [US2] Implement SeaORM entities and migrations for DogWalkerProfile, AvailabilitySchedule, NeighborhoodZone, and MediaAsset in `backend/crates/walkmanager-infrastructure/src/persistence/entities/profiles.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
-- [ ] T065 [US2] Implement public and protected media URL handling for profile and identity photos in `backend/crates/walkmanager-infrastructure/src/media/seaweedfs_storage.rs`
-- [ ] T066 [US2] Implement Axum walker profile routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/walker_profiles.rs`
-- [ ] T067 [US2] Implement walker profile API client and schemas in `frontend/src/features/walker-profile/api/`
-- [ ] T068 [US2] Implement profile editor, schedule editor, capacity input, and media upload UI in `frontend/src/features/walker-profile/components/`
-- [ ] T069 [US2] Implement public walker profile view in `frontend/src/features/walker-profile/pages/PublicWalkerProfilePage.tsx`
-
-**Checkpoint**: User Story 2 is independently testable after US1 auth foundation.
-
----
-
 ## Phase 5: User Story 3 - Search and Request a Walk (Priority: P1)
 
 **Goal**: Customers can search walkers by filters, see nearest-first results, and create Pending bookings for valid future time ranges without over-capacity conflicts.
