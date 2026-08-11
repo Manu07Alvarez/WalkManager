@@ -45,26 +45,6 @@
 **Checkpoint**: Foundation complete. User story implementation can now begin in priority order or in parallel by story.
 
 ---
-
-## Phase 3: User Story 1 - Register and Manage Identity (Priority: P1) MVP
-
-**Goal**: Dog walkers, customers, and internal moderators can authenticate with role-appropriate capabilities, while CUIL remains globally unique and protected.
-
-- [X] T044 [P] [US1] Create registration, auth, token, and contact update command/query contracts in `backend/crates/walkmanager-application/src/identity/contracts.rs`
-- [ ] T045 [US1] Implement registration, CUIL uniqueness, password hashing, JWT issuing, login, and customer contact update use cases in `backend/crates/walkmanager-application/src/identity/`
-- [ ] T046 [US1] Implement boundary validators for registration, login, and contact update commands in `backend/crates/walkmanager-application/src/identity/validation.rs`
-- [ ] T047 [US1] Implement SeaORM entities and migration for UserAccount, CustomerProfile, initial DogWalkerProfile, and CUIL unique index in `backend/crates/walkmanager-infrastructure/src/persistence/entities/identity.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
-- [ ] T048 [US1] Implement protected identity-document upload during walker registration in `backend/crates/walkmanager-application/src/media/identity_document_service.rs`
-- [ ] T049 [US1] Implement Axum auth and user contact routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/auth.rs` and `backend/crates/walkmanager-api/src/http/users.rs`
-- [ ] T050 [US1] Implement auth API client and Zod schemas in `frontend/src/features/auth/api/`
-- [ ] T051 [US1] Implement customer and walker registration forms in `frontend/src/features/auth/components/`
-- [ ] T052 [US1] Implement login flow, customer contact settings UI, and role-directed shell routing in `frontend/src/features/auth/`
-- [ ] T053 [US1] Verify US1 quickstart scenarios and update notes in `specs/001-dog-walking-platform/quickstart.md`
-
-**Checkpoint**: User Story 1 is independently functional and provides the MVP identity foundation.
-
----
-
 ## Phase 4: User Story 2 - Publish Walker Services (Priority: P1)
 
 **Goal**: Dog walkers can manage public profile details, pricing, working hours, availability, service zone, photos, and simultaneous dog capacity.
