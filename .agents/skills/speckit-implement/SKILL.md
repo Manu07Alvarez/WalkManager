@@ -183,8 +183,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **TODO-TREE Audit**: Scan modified files for remaining `TODO:`, `FIXME:`, `BUG:`, `HACK:`, `XXX:`, `REVIEW:` tags.
      - Group detected items into a summary table (Tag, File, Line, Description).
      - If critical `FIXME:` or `BUG:` tags exist, report them clearly before marking execution complete.
-   - **PR & Branch Offer**: Offer to run `/speckit-git-commit` to stage, push, and open a Pull Request (PR) on an isolated `feature/`, `bug/`, `fix/`, or `todo/` branch.
-   - Report final status with summary of completed work.
+    - **Automatic PR & Branch Execution**: Automatically invoke `/speckit-git-commit` upon completing implementation tasks (or individual feature/bug/fix/todo items) to stage changes, push to the isolated branch (`feature/`, `bug/`, `fix/`, `todo/`), perform the TODO-TREE audit, and open the Pull Request.
+    - Report final status with summary of completed work and PR link.
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit-tasks` first to regenerate the task list.
 

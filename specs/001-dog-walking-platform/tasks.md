@@ -35,19 +35,6 @@
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
-
-**Purpose**: Establish cross-cutting Rust backend, frontend, persistence, validation, security, OpenAPI, WebSocket, and API foundations that all user stories depend on.
-
-**CRITICAL**: No user story work can begin until this phase is complete.
-
-- [ ] T015 Add failing Rust API tests for standardized error responses in `backend/crates/walkmanager-api/tests/errors_standard_response.rs`
-- [ ] T016 Add failing Rust API tests for JWT authentication and role authorization policies in `backend/crates/walkmanager-api/tests/security_authorization.rs`
-- [ ] T017 Add failing Rust infrastructure tests for PostgreSQL, PostGIS, SeaORM connection, and migration smoke checks in `backend/crates/walkmanager-infrastructure/tests/persistence_configuration.rs`
-- [ ] T018 Add failing Rust application tests for protected media access policy decisions in `backend/crates/walkmanager-application/tests/media_access_policy.rs`
-- [X] T019 Add failing Rust API tests for WebSocket authentication and connection registration in `backend/crates/walkmanager-api/tests/websocket_auth.rs`
-- [X] T020 Add failing frontend tests for app providers, auth context shell, and responsive layout shell supporting 375px, 768px, and 1024px viewports in `frontend/tests/app/AppShell.test.tsx`
-- [X] T023 Implement JWT authentication, asymmetric key configuration, and role authorization layer in `backend/crates/walkmanager-api/src/security/`
 - [X] T029 Implement DragonflyDB cache, rate-limit, notification coordination, and presence abstractions in `backend/crates/walkmanager-infrastructure/src/caching/`
 - [X] T030 Implement notification abstraction and dispatch queue contract in `backend/crates/walkmanager-application/src/notifications/`
 - [X] T032 Implement OpenAPI generation configuration with bearer auth and standardized error schemas in `backend/crates/walkmanager-api/src/openapi/`
@@ -63,23 +50,6 @@
 
 **Goal**: Dog walkers, customers, and internal moderators can authenticate with role-appropriate capabilities, while CUIL remains globally unique and protected.
 
-**Independent Test**: Register one dog walker and one customer, sign in as each role, confirm CUIL uniqueness, protected identity media handling, contact editing, and role-based access.
-
-### Tests for User Story 1
-
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T036 [P] [US1] Add OpenAPI contract tests for `/auth/register/walker`, `/auth/register/customer`, `/auth/login`, and `/users/me/contact` in `backend/crates/walkmanager-api/tests/auth_contract.rs`
-- [ ] T037 [P] [US1] Add Rust domain tests for CUIL uniqueness, role identity rules, and Moderator operative role in `backend/crates/walkmanager-domain/tests/identity_user_account.rs`
-- [ ] T038 [P] [US1] Add Rust application tests for registration, login, and customer contact update use cases in `backend/crates/walkmanager-application/tests/identity_register_login.rs`
-- [ ] T039 [P] [US1] Add Rust application validation tests for walker registration, customer registration, login, and contact update inputs in `backend/crates/walkmanager-application/tests/identity_validation.rs`
-- [ ] T040 [P] [US1] Add SeaORM repository tests for global CUIL uniqueness and profile bootstrap persistence in `backend/crates/walkmanager-infrastructure/tests/user_account_repository.rs`
-- [ ] T041 [P] [US1] Add frontend feature tests for registration, login, contact editing, and role-directed navigation in `frontend/tests/features/auth/AuthFlows.test.tsx`
-
-### Implementation for User Story 1
-
-- [X] T042 [P] [US1] Create UserAccount, Role, Cuil, Email, PhoneNumber, and account status value objects in `backend/crates/walkmanager-domain/src/identity/`
-- [X] T043 [P] [US1] Create CustomerProfile and DogWalker identity profile bootstrap domain entities in `backend/crates/walkmanager-domain/src/profiles/`
 - [X] T044 [P] [US1] Create registration, auth, token, and contact update command/query contracts in `backend/crates/walkmanager-application/src/identity/contracts.rs`
 - [ ] T045 [US1] Implement registration, CUIL uniqueness, password hashing, JWT issuing, login, and customer contact update use cases in `backend/crates/walkmanager-application/src/identity/`
 - [ ] T046 [US1] Implement boundary validators for registration, login, and contact update commands in `backend/crates/walkmanager-application/src/identity/validation.rs`

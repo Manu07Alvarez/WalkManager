@@ -119,9 +119,9 @@ hooks:
   - extension: git
     command: speckit.git.commit
     enabled: true
-    optional: true
-    prompt: Commit implementation changes?
-    description: Auto-commit after implementation
+    optional: false
+    prompt: Create branch, commit and open Pull Request for implemented changes?
+    description: Create PR and isolated branch via speckit.git.commit after implementation
     condition: null
   after_checklist:
   - extension: git
