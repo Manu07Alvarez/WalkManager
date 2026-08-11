@@ -158,6 +158,13 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Core development**: Implement models, services, CLI commands, endpoints
    - **Integration work**: Database connections, middleware, logging, external services
    - **Polish and validation**: Unit tests, performance optimization, documentation
+   - **TODO-TREE Standard Tagging System**: Whenever analyzing code, deferring details for later, or leaving marks for future polish, enforce standardized comments:
+     - `TODO: description` - Planned enhancements, deferred sub-tasks, or missing implementations.
+     - `FIXME: description` - Known bugs or broken behaviors requiring future fixes.
+     - `BUG: description` - Documented edge cases causing unwanted behavior.
+     - `HACK: description` - Temporary workarounds or non-ideal implementations.
+     - `XXX: description` - Critical code smells, performance bottlenecks, or warnings.
+     - `REVIEW: description` - Complex logic requiring team code review.
 
 8. Progress tracking and error handling:
    - Report progress after each completed task
@@ -166,13 +173,18 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Provide clear error messages with context for debugging
    - Suggest next steps if implementation cannot proceed
    - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
+   - If work is left incomplete, mark the exact location with a `TODO-TREE` tag (`TODO:`, `FIXME:`, `BUG:`).
 
-9. Completion validation:
+9. Completion validation & TODO-TREE Audit:
    - Verify all required tasks are completed
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan
-   - Report final status with summary of completed work
+   - **TODO-TREE Audit**: Scan modified files for remaining `TODO:`, `FIXME:`, `BUG:`, `HACK:`, `XXX:`, `REVIEW:` tags.
+     - Group detected items into a summary table (Tag, File, Line, Description).
+     - If critical `FIXME:` or `BUG:` tags exist, report them clearly before marking execution complete.
+   - **PR & Branch Offer**: Offer to run `/speckit-git-commit` to stage, push, and open a Pull Request (PR) on an isolated `feature/`, `bug/`, `fix/`, or `todo/` branch.
+   - Report final status with summary of completed work.
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit-tasks` first to regenerate the task list.
 

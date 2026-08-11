@@ -1,0 +1,5 @@
+[formatting]
+max_width = 100
+
+[lib]
+fmt_nested = true

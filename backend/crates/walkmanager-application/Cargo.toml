@@ -1,0 +1,17 @@
+[package]
+name = "walkmanager-application"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+time.workspace = true
+uuid = { workspace = true, features = ["v4"] }
+walkmanager-domain = { path = "../walkmanager-domain" }
+bcrypt.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true
