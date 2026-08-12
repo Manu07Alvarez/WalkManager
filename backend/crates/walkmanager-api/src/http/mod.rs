@@ -6,6 +6,7 @@ pub mod bookings;
 pub mod service_results;
 pub mod chats;
 pub mod notifications;
+pub mod reviews;
 
 pub use auth::*;
 pub use users::*;
@@ -15,3 +16,4 @@ pub use bookings::*;
 pub use service_results::*;
 pub use chats::*;
 pub use notifications::*;
+pub use reviews::*;

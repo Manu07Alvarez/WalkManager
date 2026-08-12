@@ -1,3 +1,2 @@
 pub mod contracts;
-
-pub trait ReviewService: Send + Sync {}
+pub mod submit_review;
