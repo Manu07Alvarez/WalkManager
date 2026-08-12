@@ -1,5 +1,7 @@
 use async_trait::async_trait;
 
+pub mod booking_notification_service;
+
 #[async_trait]
 pub trait NotificationService: Send + Sync {
     async fn notify_user(&self, user_id: &str, r#type: &str, payload: serde_json::Value) -> Result<(), NotificationError>;

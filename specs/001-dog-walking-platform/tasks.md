@@ -162,47 +162,36 @@
 
 ---
 
+## Phase 6: User Story 4 - Confirm and Manage Requests (Priority: P2)
 
 **Goal**: Walkers can accept, reject, cancel, and later report service results while capacity and state transitions remain concurrency-safe.
 
-**Independent Test**: Create a Pending booking, accept it as the walker, reject another request, prevent concurrent over-capacity acceptance, expire stale requests, and assign one valid Service Result.
-
 ### Tests for User Story 4
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T086 [P] [US4] Add OpenAPI contract tests for booking detail, accept, reject, cancel, result report, confirm, and dispute routes in `backend/crates/walkmanager-api/tests/booking_lifecycle_contract.rs`
-- [ ] T087 [P] [US4] Add Rust domain tests for Booking Status transitions and terminal-state rules in `backend/crates/walkmanager-domain/tests/booking_status_transitions.rs`
-- [ ] T088 [P] [US4] Add Rust domain tests for Service Result assignment, final-result uniqueness, and Disputed transition rules in `backend/crates/walkmanager-domain/tests/service_result_transitions.rs`
-- [ ] T089 [P] [US4] Add SeaORM integration tests for concurrent booking acceptance and capacity preservation in `backend/crates/walkmanager-infrastructure/tests/concurrent_booking_acceptance.rs`
-- [ ] T090 [P] [US4] Add Rust application tests for pending booking expiration processing and result auto-finalization in `backend/crates/walkmanager-application/tests/booking_lifecycle_workers.rs`
-- [ ] T091 [P] [US4] Add frontend feature tests for walker service dashboard and customer booking detail views in `frontend/tests/features/bookings/BookingLifecycle.test.tsx`
+- [X] T086 [P] [US4] Add OpenAPI contract tests for booking detail, accept, reject, cancel, result report, confirm, and dispute routes in `backend/crates/walkmanager-api/tests/booking_lifecycle_contract.rs`
+- [X] T087 [P] [US4] Add Rust domain tests for Booking Status transitions and terminal-state rules in `backend/crates/walkmanager-domain/tests/booking_status_transitions.rs`
+- [X] T088 [P] [US4] Add Rust domain tests for Service Result assignment, final-result uniqueness, and Disputed transition rules in `backend/crates/walkmanager-domain/tests/service_result_transitions.rs`
+- [X] T089 [P] [US4] Add SeaORM integration tests for concurrent booking acceptance and capacity preservation in `backend/crates/walkmanager-infrastructure/tests/concurrent_booking_acceptance.rs`
+- [X] T090 [P] [US4] Add Rust application tests for pending booking expiration processing and result auto-finalization in `backend/crates/walkmanager-application/tests/booking_lifecycle_workers.rs`
+- [X] T091 [P] [US4] Add frontend feature tests for walker service dashboard and customer booking detail views in `frontend/tests/features/bookings/BookingLifecycle.test.tsx`
 
 ### Implementation for User Story 4
 
-- [ ] T092 [P] [US4] Extend Booking aggregate with accept, reject, cancel, expire, report result, confirm result, and dispute result methods in `backend/crates/walkmanager-domain/src/bookings/booking.rs`
-- [ ] T093 [P] [US4] Create lifecycle command contracts in `backend/crates/walkmanager-application/src/bookings/contracts.rs`
-- [ ] T094 [US4] Implement atomic accept booking use case with transaction-bound availability recheck in `backend/crates/walkmanager-application/src/bookings/accept_booking.rs`
-- [ ] T095 [US4] Implement reject, cancel, and expire booking use cases in `backend/crates/walkmanager-application/src/bookings/lifecycle.rs`
-- [ ] T096 [US4] Implement service result report, confirmation period, confirm, dispute, and auto-finalization use cases in `backend/crates/walkmanager-application/src/bookings/service_results.rs`
-- [ ] T097 [US4] Implement SeaORM transaction-bound booking repository in `backend/crates/walkmanager-infrastructure/src/persistence/repositories/booking_repository.rs`
-- [ ] T098 [US4] Implement pending expiration and result auto-finalization Tokio workers in `backend/crates/walkmanager-infrastructure/src/workers/booking_lifecycle_worker.rs`
-- [ ] T099 [US4] Implement Axum booking lifecycle and service result routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/bookings.rs` and `backend/crates/walkmanager-api/src/http/service_results.rs`
-- [ ] T100 [US4] Implement booking update notification generation in `backend/crates/walkmanager-application/src/notifications/booking_notification_service.rs`
-- [ ] T101 [US4] Implement walker service dashboard API client and schemas in `frontend/src/features/bookings/api/`
-- [ ] T102 [US4] Implement walker service dashboard, request actions, result reporting, and customer dispute UI in `frontend/src/features/bookings/`
+- [X] T092 [P] [US4] Extend Booking aggregate with accept, reject, cancel, expire, report result, confirm result, and dispute result methods in `backend/crates/walkmanager-domain/src/bookings/booking.rs`
+- [X] T093 [P] [US4] Create lifecycle command contracts in `backend/crates/walkmanager-application/src/bookings/contracts.rs`
+- [X] T094 [US4] Implement atomic accept booking use case with transaction-bound availability recheck in `backend/crates/walkmanager-application/src/bookings/accept_booking.rs`
+- [X] T095 [US4] Implement reject, cancel, and expire booking use cases in `backend/crates/walkmanager-application/src/bookings/lifecycle.rs`
+- [X] T096 [US4] Implement service result report, confirmation period, confirm, dispute, and auto-finalization use cases in `backend/crates/walkmanager-application/src/bookings/service_results.rs`
+- [X] T097 [US4] Implement SeaORM transaction-bound booking repository in `backend/crates/walkmanager-infrastructure/src/persistence/repositories/booking_repository.rs`
+- [X] T098 [US4] Implement pending expiration and result auto-finalization Tokio workers in `backend/crates/walkmanager-infrastructure/src/workers/booking_lifecycle_worker.rs`
+- [X] T099 [US4] Implement Axum booking lifecycle and service result routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/bookings.rs` and `backend/crates/walkmanager-api/src/http/service_results.rs`
+- [X] T100 [US4] Implement booking update notification generation in `backend/crates/walkmanager-application/src/notifications/booking_notification_service.rs`
+- [X] T101 [US4] Implement walker service dashboard API client and schemas in `frontend/src/features/bookings/api/`
+- [X] T102 [US4] Implement walker service dashboard, request actions, result reporting, and customer dispute UI in `frontend/src/features/bookings/`
 
 **Checkpoint**: User Story 4 is independently testable for operational booking management.
 
 ---
-
-## Phase 7: User Story 5 - Chat and Notifications (Priority: P2)
-
-**Goal**: Customers and walkers can use public inquiry chats before booking and booking-specific chats after request creation, with persisted history, WebSocket updates, presence, and notifications.
-
-**Independent Test**: Start an inquiry chat, create a booking, exchange booking chat messages, verify histories stay separate, receive WebSocket updates, and verify notification records/preferences.
-
-### Tests for User Story 5
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
