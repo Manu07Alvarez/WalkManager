@@ -32,6 +32,7 @@ impl CreateBookingUseCase {
             end_time: booking.time_range.end_time,
             dog_count: booking.dog_count,
             status: format!("{:?}", booking.status),
+            service_result: None,
             created_at: booking.created_at,
         })
     }

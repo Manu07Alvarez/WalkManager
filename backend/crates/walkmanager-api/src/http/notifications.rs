@@ -1,5 +1,5 @@
 use axum::{http::StatusCode, Json};
-use serde::{Deserialize, Serialize};
+use serde::{Serialize};
 
 // TODO: Add OpenAPI path annotations for /notifications and /notifications/preferences
 // REVIEW: Support unread filter parameter on notifications query
