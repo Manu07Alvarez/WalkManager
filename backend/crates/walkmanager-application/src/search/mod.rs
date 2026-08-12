@@ -1,3 +1,2 @@
 pub mod contracts;
-
-pub trait WalkerSearchService: Send + Sync {}
+pub mod search_walkers;

@@ -1,3 +1,3 @@
 pub mod contracts;
-
-pub trait BookingService: Send + Sync {}
+pub mod availability;
+pub mod create_booking;

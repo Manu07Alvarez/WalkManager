@@ -1,18 +1,25 @@
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+// TODO: Support spatial polygon bounding box filtering in search contract
+// REVIEW: Validate max search radius limits to avoid heavy spatial query load
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WalkerSearchQuery {
-    pub neighborhood: Option<String>,
-    pub max_distance_km: Option<f64>,
-    pub available_from: Option<String>,
-    pub available_to: Option<String>,
-    pub max_price: Option<f64>,
-    pub min_rating: Option<f64>,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub radius_km: Option<f64>,
+    pub max_dog_size: Option<String>,
+    pub page: Option<u64>,
+    pub page_size: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WalkerSearchResult {
-    pub walker_id: Uuid,
+pub struct WalkerSearchResultItem {
+    pub walker_id: String,
+    pub full_name: String,
+    pub bio: Option<String>,
+    pub hourly_rate: f64,
+    pub max_simultaneous_dogs: u32,
     pub distance_km: f64,
+    pub profile_photo_url: Option<String>,
 }
