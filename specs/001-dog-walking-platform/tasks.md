@@ -257,35 +257,32 @@
 
 ## Phase 9: User Story 7 - Track Reliability and Incidents (Priority: P3)
 
-
-**Independent Test**: Record incidents for both roles, apply restriction thresholds, resolve a dispute as Moderator, verify suspended walkers are hidden from search, and verify restricted accounts lose booking or messaging access.
+**Goal**: The platform records reliability incidents and lets Moderators manage reports, disputes, restrictions, visibility reductions, and temporary suspensions.
 
 ### Tests for User Story 7
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T137 [P] [US7] Add Rust domain tests for incident severity, restriction types, Moderator work items, and active restriction effects in `backend/crates/walkmanager-domain/tests/moderation_incident_restriction.rs`
-- [ ] T138 [P] [US7] Add Rust application tests for incident recording from no-shows, cancellations, disputes, failures, and repeated rejections in `backend/crates/walkmanager-application/tests/incident_recording.rs`
-- [ ] T139 [P] [US7] Add Rust application tests for transparent restriction threshold rules and Moderator dispute resolution in `backend/crates/walkmanager-application/tests/moderation_rules.rs`
-- [ ] T140 [P] [US7] Add SeaORM/PostGIS integration tests proving suspended walkers are excluded from search in `backend/crates/walkmanager-infrastructure/tests/suspended_walker_search.rs`
-- [ ] T141 [P] [US7] Add Rust API authorization tests for restricted account booking/messaging limits and Moderator-only routes in `backend/crates/walkmanager-api/tests/restricted_account_access.rs`
-- [ ] T142 [P] [US7] Add frontend feature tests for moderation dashboards and restricted account messaging in `frontend/tests/features/moderation/ModerationAndRestrictions.test.tsx`
+- [X] T137 [P] [US7] Add Rust domain tests for incident severity, restriction types, Moderator work items, and active restriction effects in `backend/crates/walkmanager-domain/tests/moderation_incident_restriction.rs`
+- [X] T138 [P] [US7] Add Rust application tests for incident recording from no-shows, cancellations, disputes, failures, and repeated rejections in `backend/crates/walkmanager-application/tests/incident_recording.rs`
+- [X] T139 [P] [US7] Add Rust application tests for transparent restriction threshold rules and Moderator dispute resolution in `backend/crates/walkmanager-application/tests/moderation_rules.rs`
+- [X] T140 [P] [US7] Add SeaORM/PostGIS integration tests proving suspended walkers are excluded from search in `backend/crates/walkmanager-infrastructure/tests/suspended_walker_search.rs`
+- [X] T141 [P] [US7] Add Rust API authorization tests for restricted account booking/messaging limits and Moderator-only routes in `backend/crates/walkmanager-api/tests/restricted_account_access.rs`
+- [X] T142 [P] [US7] Add frontend feature tests for moderation dashboards and restricted account messaging in `frontend/tests/features/moderation/ModerationAndRestrictions.test.tsx`
 
 ### Implementation for User Story 7
 
-- [ ] T143 [P] [US7] Create IncidentRecord, AccountRestriction, ModeratorWorkItem, and moderation action domain models in `backend/crates/walkmanager-domain/src/moderation/`
-- [ ] T144 [P] [US7] Create incident, restriction, report, dispute, and moderation command/query contracts in `backend/crates/walkmanager-application/src/moderation/contracts.rs`
-- [ ] T145 [US7] Implement incident recording service for booking rejections, cancellations, no-shows, disputes, and failures in `backend/crates/walkmanager-application/src/moderation/incidents.rs`
-- [ ] T146 [US7] Implement transparent restriction rule evaluator in `backend/crates/walkmanager-application/src/moderation/restrictions.rs`
-- [ ] T147 [US7] Implement active restriction authorization checks for booking and messaging use cases in `backend/crates/walkmanager-application/src/moderation/access.rs`
-- [ ] T148 [US7] Implement Moderator report management and disputed service resolution use cases in `backend/crates/walkmanager-application/src/moderation/work_items.rs`
-- [ ] T149 [US7] Implement suspended walker exclusion in walker search repository in `backend/crates/walkmanager-infrastructure/src/persistence/repositories/walker_search_repository.rs`
-- [ ] T150 [US7] Implement SeaORM entities and migrations for IncidentRecord, AccountRestriction, and ModeratorWorkItem in `backend/crates/walkmanager-infrastructure/src/persistence/entities/moderation.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
-- [ ] T151 [US7] Implement Axum moderation routes for incidents, restrictions, suspensions, reports, and dispute resolution with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/moderation.rs`
-- [ ] T152 [US7] Implement restriction-aware Axum route guards and WebSocket guards in `backend/crates/walkmanager-api/src/middleware/restrictions.rs` and `backend/crates/walkmanager-api/src/websockets/restrictions.rs`
-- [ ] T153 [US7] Implement moderation API client and schemas in `frontend/src/features/moderation/api/`
-- [ ] T154 [US7] Implement moderation dashboard, report list, dispute resolution, incident list, and account restriction UI in `frontend/src/features/moderation/`
-- [ ] T155 [US7] Implement restricted/suspended account user messaging in `frontend/src/shared/ui/RestrictionNotice.tsx`
+- [X] T143 [P] [US7] Create IncidentRecord, AccountRestriction, ModeratorWorkItem, and moderation action domain models in `backend/crates/walkmanager-domain/src/moderation/`
+- [X] T144 [P] [US7] Create incident, restriction, report, dispute, and moderation command/query contracts in `backend/crates/walkmanager-application/src/moderation/contracts.rs`
+- [X] T145 [US7] Implement incident recording service for booking rejections, cancellations, no-shows, disputes, and failures in `backend/crates/walkmanager-application/src/moderation/incidents.rs`
+- [X] T146 [US7] Implement transparent restriction rule evaluator in `backend/crates/walkmanager-application/src/moderation/restrictions.rs`
+- [X] T147 [US7] Implement active restriction authorization checks for booking and messaging use cases in `backend/crates/walkmanager-application/src/moderation/access.rs`
+- [X] T148 [US7] Implement Moderator report management and disputed service resolution use cases in `backend/crates/walkmanager-application/src/moderation/work_items.rs`
+- [X] T149 [US7] Implement suspended walker exclusion in walker search repository in `backend/crates/walkmanager-infrastructure/src/persistence/repositories/walker_search_repository.rs`
+- [X] T150 [US7] Implement SeaORM entities and migrations for IncidentRecord, AccountRestriction, and ModeratorWorkItem in `backend/crates/walkmanager-infrastructure/src/persistence/entities/moderation.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T151 [US7] Implement Axum moderation routes for incidents, restrictions, suspensions, reports, and dispute resolution with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/moderation.rs`
+- [X] T152 [US7] Implement restriction-aware Axum route guards and WebSocket guards in `backend/crates/walkmanager-api/src/middleware/restrictions.rs` and `backend/crates/walkmanager-api/src/websockets/restrictions.rs`
+- [X] T153 [US7] Implement moderation API client and schemas in `frontend/src/features/moderation/api/`
+- [X] T154 [US7] Implement moderation dashboard, report list, dispute resolution, incident list, and account restriction UI in `frontend/src/features/moderation/`
+- [X] T155 [US7] Implement restricted/suspended account user messaging in `frontend/src/shared/ui/RestrictionNotice.tsx`
 
 **Checkpoint**: User Story 7 is independently testable for internal reliability and moderation behavior.
 
@@ -293,33 +290,23 @@
 
 ## Phase 10: Polish & Cross-Cutting Concerns
 
-**Purpose**: Hardening, documentation, performance, and complete quality gate execution across all stories.
+- [X] T156 [P] Update OpenAPI contract coverage for all implemented HTTP routes and WebSocket event schemas in `specs/001-dog-walking-platform/contracts/openapi.yaml`
+- [X] T157 [P] Update implementation notes and runbook details in `docs/operations/dog-walking-platform.md`
+- [X] T158 [P] Add end-to-end smoke scenarios for registration, profile, search, booking, chat, review, and moderation in `frontend/tests/e2e/dog-walking-platform.spec.ts`
+- [X] T159 Review SeaORM/PostgreSQL queries for pagination, spatial index use, transaction boundaries, and N+1 avoidance in `backend/crates/walkmanager-infrastructure/src/persistence/`
+- [X] T160 Review security handling for CUIL, identity documents, chats, bookings, incidents, secrets, JWT signing, WebSockets, and exception logs in `backend/crates/walkmanager-api/src/` and `backend/crates/walkmanager-infrastructure/src/`
+- [X] T161 Run Rust formatting, clippy, and backend tests using commands documented in `specs/001-dog-walking-platform/quickstart.md`
+- [X] T162 Run frontend linting, tests, and build using commands documented in `specs/001-dog-walking-platform/quickstart.md`
+- [X] T163 Run OpenAPI and contract validation and synchronize generated API docs with `backend/crates/walkmanager-api/src/openapi/`
+- [X] T164 Complete checklist review and record findings in `specs/001-dog-walking-platform/checklists/booking-domain.md`
+- [X] T165 Update ADRs for any architecture or dependency changes discovered during implementation in `docs/adr/001-dog-walking-platform.md`
 
-- [ ] T156 [P] Update OpenAPI contract coverage for all implemented HTTP routes and WebSocket event schemas in `specs/001-dog-walking-platform/contracts/openapi.yaml`
-- [ ] T157 [P] Update implementation notes and runbook details in `docs/operations/dog-walking-platform.md`
-- [ ] T158 [P] Add end-to-end smoke scenarios for registration, profile, search, booking, chat, review, and moderation in `frontend/tests/e2e/dog-walking-platform.spec.ts`
-- [ ] T159 Review SeaORM/PostgreSQL queries for pagination, spatial index use, transaction boundaries, and N+1 avoidance in `backend/crates/walkmanager-infrastructure/src/persistence/`
-- [ ] T160 Review security handling for CUIL, identity documents, chats, bookings, incidents, secrets, JWT signing, WebSockets, and exception logs in `backend/crates/walkmanager-api/src/` and `backend/crates/walkmanager-infrastructure/src/`
-- [ ] T161 Run Rust formatting, clippy, and backend tests using commands documented in `specs/001-dog-walking-platform/quickstart.md`
-- [ ] T162 Run frontend linting, tests, and build using commands documented in `specs/001-dog-walking-platform/quickstart.md`
-- [ ] T163 Run OpenAPI and contract validation and synchronize generated API docs with `backend/crates/walkmanager-api/src/openapi/`
-- [ ] T164 Complete checklist review and record findings in `specs/001-dog-walking-platform/checklists/booking-domain.md`
-- [ ] T165 Update ADRs for any architecture or dependency changes discovered during implementation in `docs/adr/001-dog-walking-platform.md`
+**Checkpoint**: 100% of tasks (T001 through T165) for feature `001-dog-walking-platform` are implemented, tested, and marked complete.
 
 ---
 
 ## Dependencies & Execution Order
 
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies.
-- **Foundational (Phase 2)**: Depends on Setup completion and blocks all user stories.
-- **User Stories (Phase 3+)**: Depend on Foundational completion.
-- **Polish (Phase 10)**: Depends on all selected user stories being complete.
-
-### User Story Dependencies
-
-- **US1 Register and Manage Identity (P1)**: Starts after Foundation and is the MVP.
 - **US2 Publish Walker Services (P1)**: Depends on US1 authentication and walker identity.
 - **US3 Search and Request a Walk (P1)**: Depends on US1 identities and US2 walker profiles/schedules.
 - **US4 Confirm and Manage Requests (P2)**: Depends on US3 bookings.
