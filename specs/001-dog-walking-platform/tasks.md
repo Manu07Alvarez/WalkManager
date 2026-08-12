@@ -35,55 +35,133 @@
 
 ---
 
+## Phase 2: Foundational Components (Shared Across Stories)
+
+**Purpose**: Core architectural primitives, standard error handling, SeaORM database setup, authorization rules, media storage policy, DragonflyDB cache, and OpenAPI generator setup.
+
+### Tests for Foundational Components
+
+- [X] T015 [P] Add OpenAPI error response schema and standard error envelope contract tests in `backend/crates/walkmanager-api/tests/errors_standard_response.rs`
+- [X] T016 [P] Add Rust domain tests for Role, Cuil validation, and Security Authorization rules in `backend/crates/walkmanager-api/tests/security_authorization.rs`
+- [X] T017 [P] Add SeaORM persistence connection and initial configuration tests in `backend/crates/walkmanager-infrastructure/tests/persistence_configuration.rs`
+- [X] T018 [P] Add Rust application tests for public vs protected media URL access policy in `backend/crates/walkmanager-application/tests/media_access_policy.rs`
+- [X] T019 [P] Add failing Rust API tests for WebSocket authentication and connection registration in `backend/crates/walkmanager-api/tests/websocket_auth.rs`
+- [X] T020 [P] Add failing Rust infrastructure tests for SeaweedFS media upload and access authorization in `backend/crates/walkmanager-infrastructure/tests/seaweedfs_storage.rs`
+
+### Implementation for Foundational Components
+
+- [X] T021 Implement standardized HTTP response envelope and error mapping middleware in `backend/crates/walkmanager-api/src/middleware/error_handling.rs`
+- [X] T022 Implement SeaORM database connection builder and migration runner in `backend/crates/walkmanager-infrastructure/src/persistence/`
+- [X] T023 Implement JWT encoding, decoding, token refresh logic, and Bearer auth extractor in `backend/crates/walkmanager-api/src/middleware/auth_jwt.rs`
+- [X] T024 Implement RBAC middleware enforcing Customer, DogWalker, and Moderator roles in `backend/crates/walkmanager-api/src/middleware/rbac.rs`
+- [X] T025 Implement CUIL format, gender digit, checksum, and normalization logic in `backend/crates/walkmanager-domain/src/identity/cuil.rs`
+- [X] T026 Implement SeaweedFS storage client for identity documents, profile photos, and public dog photos in `backend/crates/walkmanager-infrastructure/src/media/seaweedfs_storage.rs`
+- [X] T027 Implement PostgreSQL/PostGIS spatial indexes and neighborhood boundaries migration in `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T028 Implement SeaORM entity generator setup and core schema definitions in `backend/crates/walkmanager-infrastructure/src/persistence/entities/mod.rs`
 - [X] T029 Implement DragonflyDB cache, rate-limit, notification coordination, and presence abstractions in `backend/crates/walkmanager-infrastructure/src/caching/`
 - [X] T030 Implement notification abstraction and dispatch queue contract in `backend/crates/walkmanager-application/src/notifications/`
+- [X] T031 Implement Tokio async task supervisor and background queue runner in `backend/crates/walkmanager-infrastructure/src/workers/`
 - [X] T032 Implement OpenAPI generation configuration with bearer auth and standardized error schemas in `backend/crates/walkmanager-api/src/openapi/`
-- [X] T034 Implement shared frontend validation, error display, responsive layout for 375px, 768px, and 1024px viewports, and API client utilities in `frontend/src/shared/`)
+- [X] T033 Implement Axum application router, CORS rules, tracing middleware, and state dependency injection in `backend/crates/walkmanager-api/src/main.rs`
+- [X] T034 Implement shared frontend validation, error display, responsive layout for 375px, 768px, and 1024px viewports, and API client utilities in `frontend/src/shared/`
 - [X] T035 Update OpenAPI source contract alignment comments in `specs/001-dog-walking-platform/contracts/openapi.yaml`
-- [X] T042 Create UserAccount, Role, Cuil, Email, PhoneNumber, and account status value objects in `backend/crates/walkmanager-domain/src/identity/`
 
 **Checkpoint**: Foundation complete. User story implementation can now begin in priority order or in parallel by story.
 
 ---
+
+## Phase 3: User Story 1 - Register and Manage Identity (Priority: P1) MVP
+
+**Goal**: Dog walkers, customers, and internal moderators can authenticate with role-appropriate capabilities, while CUIL remains globally unique and protected.
+
+### Tests for User Story 1
+
+- [X] T036 [P] [US1] Add OpenAPI contract tests for `/auth/register/walker`, `/auth/register/customer`, `/auth/login`, and `/users/me/contact` in `backend/crates/walkmanager-api/tests/auth_contract.rs`
+- [X] T037 [P] [US1] Add Rust domain tests for CUIL uniqueness, role identity rules, and Moderator operative role in `backend/crates/walkmanager-domain/tests/identity_user_account.rs`
+- [X] T038 [P] [US1] Add Rust application tests for registration, login, and customer contact update use cases in `backend/crates/walkmanager-application/tests/identity_register_login.rs`
+- [X] T039 [P] [US1] Add Rust application validation tests for walker registration, customer registration, login, and contact update inputs in `backend/crates/walkmanager-application/tests/identity_validation.rs`
+- [X] T040 [P] [US1] Add SeaORM repository tests for global CUIL uniqueness and profile bootstrap persistence in `backend/crates/walkmanager-infrastructure/tests/user_account_repository.rs`
+- [X] T041 [P] [US1] Add frontend feature tests for registration, login, contact editing, and role-directed navigation in `frontend/tests/features/auth/AuthFlows.test.tsx`
+
+### Implementation for User Story 1
+
+- [X] T042 [P] [US1] Create UserAccount, Role, Cuil, Email, PhoneNumber, and account status value objects in `backend/crates/walkmanager-domain/src/identity/`
+- [X] T043 [P] [US1] Create CustomerProfile and DogWalker identity profile bootstrap domain entities in `backend/crates/walkmanager-domain/src/profiles/`
+- [X] T044 [P] [US1] Create registration, auth, token, and contact update command/query contracts in `backend/crates/walkmanager-application/src/identity/contracts.rs`
+- [X] T045 [US1] Implement registration, CUIL uniqueness, password hashing, JWT issuing, login, and customer contact update use cases in `backend/crates/walkmanager-application/src/identity/`
+- [X] T046 [US1] Implement boundary validators for registration, login, and contact update commands in `backend/crates/walkmanager-application/src/identity/validation.rs`
+- [X] T047 [US1] Implement SeaORM entities and migration for UserAccount, CustomerProfile, initial DogWalkerProfile, and CUIL unique index in `backend/crates/walkmanager-infrastructure/src/persistence/entities/identity.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T048 [US1] Implement protected identity-document upload during walker registration in `backend/crates/walkmanager-application/src/media/identity_document_service.rs`
+- [X] T049 [US1] Implement Axum auth and user contact routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/auth.rs` and `backend/crates/walkmanager-api/src/http/users.rs`
+- [X] T050 [US1] Implement auth API client and Zod schemas in `frontend/src/features/auth/api/`
+- [X] T051 [US1] Implement customer and walker registration forms in `frontend/src/features/auth/components/`
+- [X] T052 [US1] Implement login flow, customer contact settings UI, and role-directed shell routing in `frontend/src/features/auth/`
+- [X] T053 [US1] Verify US1 quickstart scenarios and update notes in `specs/001-dog-walking-platform/quickstart.md`
+
+**Checkpoint**: User Story 1 is independently functional and provides the MVP identity foundation.
+
+---
+
 ## Phase 4: User Story 2 - Publish Walker Services (Priority: P1)
 
 **Goal**: Dog walkers can manage public profile details, pricing, working hours, availability, service zone, photos, and simultaneous dog capacity.
 
+### Tests for User Story 2
+
+- [X] T054 [P] [US2] Add OpenAPI contract tests for `/walkers/me/profile` and `/walkers/{walkerId}` in `backend/crates/walkmanager-api/tests/walker_profile_contract.rs`
+- [X] T055 [P] [US2] Add Rust domain tests for walker capacity, public profile, and capacity-change conflict notification rules in `backend/crates/walkmanager-domain/tests/profile_dog_walker.rs`
+- [X] T056 [P] [US2] Add Rust application tests for profile update and public profile retrieval in `backend/crates/walkmanager-application/tests/walker_profile_use_cases.rs`
+- [X] T057 [P] [US2] Add Rust validation tests for profile, pricing, schedule, capacity, and zone inputs in `backend/crates/walkmanager-application/tests/walker_profile_validation.rs`
+- [X] T058 [P] [US2] Add SeaORM repository tests for walker profile, availability schedules, media references, and neighborhood zone references in `backend/crates/walkmanager-infrastructure/tests/walker_profile_repository.rs`
+- [X] T059 [P] [US2] Add frontend feature tests for walker profile management in `frontend/tests/features/walker-profile/WalkerProfileManagement.test.tsx`
+
+### Implementation for User Story 2
+
+- [X] T060 [P] [US2] Extend DogWalkerProfile, AvailabilitySchedule, MediaAsset, and NeighborhoodZone domain models in `backend/crates/walkmanager-domain/src/profiles/` and `backend/crates/walkmanager-domain/src/scheduling/`
+- [X] T061 [P] [US2] Create walker profile and schedule command/query contracts in `backend/crates/walkmanager-application/src/profiles/contracts.rs`
+- [X] T062 [US2] Implement walker profile update and public profile query use cases in `backend/crates/walkmanager-application/src/profiles/`
+- [X] T063 [US2] Implement walker profile, schedule, pricing, capacity, and media validators in `backend/crates/walkmanager-application/src/profiles/validation.rs`
+- [X] T064 [US2] Implement SeaORM entities and migrations for DogWalkerProfile, AvailabilitySchedule, NeighborhoodZone, and MediaAsset in `backend/crates/walkmanager-infrastructure/src/persistence/entities/profiles.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T065 [US2] Implement public and protected media URL handling for profile and identity photos in `backend/crates/walkmanager-infrastructure/src/media/seaweedfs_storage.rs`
+- [X] T066 [US2] Implement Axum walker profile routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/walker_profiles.rs`
+- [X] T067 [US2] Implement walker profile API client and schemas in `frontend/src/features/walker-profile/api/`
+- [X] T068 [US2] Implement profile editor, schedule editor, capacity input, and media upload UI in `frontend/src/features/walker-profile/components/`
+- [X] T069 [US2] Implement public walker profile view in `frontend/src/features/walker-profile/pages/PublicWalkerProfilePage.tsx`
+
+**Checkpoint**: User Story 2 is independently testable after US1 auth foundation.
+
+---
+
 ## Phase 5: User Story 3 - Search and Request a Walk (Priority: P1)
 
-**Goal**: Customers can search walkers by filters, see nearest-first results, and create Pending bookings for valid future time ranges without over-capacity conflicts.
-
-**Independent Test**: Search as a customer, apply filters, verify nearest-first ordering, and create a Pending booking for an available walker.
+**Goal**: Customers can search dog walkers by location, neighborhood, availability, and capacity, view nearest walkers, and submit walk requests in Pending status.
 
 ### Tests for User Story 3
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T070 [P] [US3] Add OpenAPI contract tests for `/walkers/search` and `/bookings` creation in `backend/crates/walkmanager-api/tests/search_and_booking_contract.rs`
-- [ ] T071 [P] [US3] Add Rust domain tests for booking creation, valid time ranges, dog count, and Pending status in `backend/crates/walkmanager-domain/tests/booking_creation.rs`
-- [ ] T072 [P] [US3] Add Rust application tests for availability validation against schedules, accepted bookings, dog capacity, and neighborhood proximity in `backend/crates/walkmanager-application/tests/availability_validation.rs`
-- [ ] T073 [P] [US3] Add SeaORM/PostGIS integration tests for distance filtering and nearest-first ordering in `backend/crates/walkmanager-infrastructure/tests/walker_search_query.rs`
-- [ ] T074 [P] [US3] Add frontend feature tests for search filters and booking request form in `frontend/tests/features/search/SearchAndBookingRequest.test.tsx`
+- [X] T070 [P] [US3] Add OpenAPI contract tests for `/walkers/search` and `/bookings` creation in `backend/crates/walkmanager-api/tests/search_and_booking_contract.rs`
+- [X] T071 [P] [US3] Add Rust domain tests for booking creation, valid time ranges, dog count, and Pending status in `backend/crates/walkmanager-domain/tests/booking_creation.rs`
+- [X] T072 [P] [US3] Add Rust application tests for availability validation against schedules, accepted bookings, dog capacity, and neighborhood proximity in `backend/crates/walkmanager-application/tests/availability_validation.rs`
+- [X] T073 [P] [US3] Add SeaORM/PostGIS integration tests for distance filtering and nearest-first ordering in `backend/crates/walkmanager-infrastructure/tests/walker_search_query.rs`
+- [X] T074 [P] [US3] Add frontend feature tests for search filters and booking request form in `frontend/tests/features/search/SearchAndBookingRequest.test.tsx`
 
 ### Implementation for User Story 3
 
-- [ ] T075 [P] [US3] Create Booking aggregate, BookingStatus enum, dog-count rules, and time-range value object in `backend/crates/walkmanager-domain/src/bookings/`
-- [ ] T076 [P] [US3] Create search query contracts and booking creation command contracts in `backend/crates/walkmanager-application/src/search/contracts.rs` and `backend/crates/walkmanager-application/src/bookings/contracts.rs`
-- [ ] T077 [US3] Implement availability validation service using schedules, accepted bookings, capacity, and timezone normalization in `backend/crates/walkmanager-application/src/bookings/availability.rs`
-- [ ] T078 [US3] Implement walker search use case with pagination, filters, PostGIS distance, and suspended-walker exclusion hook in `backend/crates/walkmanager-application/src/search/`
-- [ ] T079 [US3] Implement create pending booking use case with past-date, invalid-range, and over-capacity domain errors in `backend/crates/walkmanager-application/src/bookings/create_booking.rs`
-- [ ] T080 [US3] Implement SeaORM entities and migrations for Booking and geospatial indexes in `backend/crates/walkmanager-infrastructure/src/persistence/entities/bookings.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
-- [ ] T081 [US3] Implement PostGIS walker search repository in `backend/crates/walkmanager-infrastructure/src/persistence/repositories/walker_search_repository.rs`
-- [ ] T082 [US3] Implement Axum search and booking creation routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/search.rs` and `backend/crates/walkmanager-api/src/http/bookings.rs`
-- [ ] T083 [US3] Implement search API client, filter schemas, and booking request schemas in `frontend/src/features/search/api/`
-- [ ] T084 [US3] Implement customer search page, filter controls, result list, and nearest-distance display in `frontend/src/features/search/`
-- [ ] T085 [US3] Implement booking request form and Pending booking feedback in `frontend/src/features/bookings/components/CreateBookingRequestForm.tsx`
+- [X] T075 [P] [US3] Create Booking aggregate, BookingStatus enum, dog-count rules, and time-range value object in `backend/crates/walkmanager-domain/src/bookings/`
+- [X] T076 [P] [US3] Create search query contracts and booking creation command contracts in `backend/crates/walkmanager-application/src/search/contracts.rs` and `backend/crates/walkmanager-application/src/bookings/contracts.rs`
+- [X] T077 [US3] Implement availability validation service using schedules, accepted bookings, capacity, and timezone normalization in `backend/crates/walkmanager-application/src/bookings/availability.rs`
+- [X] T078 [US3] Implement walker search use case with pagination, filters, PostGIS distance, and suspended-walker exclusion hook in `backend/crates/walkmanager-application/src/search/`
+- [X] T079 [US3] Implement create pending booking use case with past-date, invalid-range, and over-capacity domain errors in `backend/crates/walkmanager-application/src/bookings/create_booking.rs`
+- [X] T080 [US3] Implement SeaORM entities and migrations for Booking and geospatial indexes in `backend/crates/walkmanager-infrastructure/src/persistence/entities/bookings.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T081 [US3] Implement PostGIS walker search repository in `backend/crates/walkmanager-infrastructure/src/persistence/repositories/walker_search_repository.rs`
+- [X] T082 [US3] Implement Axum search and booking creation routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/search.rs` and `backend/crates/walkmanager-api/src/http/bookings.rs`
+- [X] T083 [US3] Implement search API client, filter schemas, and booking request schemas in `frontend/src/features/search/api/`
+- [X] T084 [US3] Implement customer search page, filter controls, result list, and nearest-distance display in `frontend/src/features/search/`
+- [X] T085 [US3] Implement booking request form and Pending booking feedback in `frontend/src/features/bookings/components/CreateBookingRequestForm.tsx`
 
 **Checkpoint**: User Story 3 completes the core marketplace P1 flow from identity to profile to search and request.
 
 ---
 
-## Phase 6: User Story 4 - Confirm and Manage Requests (Priority: P2)
 
 **Goal**: Walkers can accept, reject, cancel, and later report service results while capacity and state transitions remain concurrency-safe.
 
