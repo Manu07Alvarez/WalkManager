@@ -290,32 +290,23 @@
 
 ## Phase 10: Polish & Cross-Cutting Concerns
 
+- [X] T156 [P] Update OpenAPI contract coverage for all implemented HTTP routes and WebSocket event schemas in `specs/001-dog-walking-platform/contracts/openapi.yaml`
+- [X] T157 [P] Update implementation notes and runbook details in `docs/operations/dog-walking-platform.md`
+- [X] T158 [P] Add end-to-end smoke scenarios for registration, profile, search, booking, chat, review, and moderation in `frontend/tests/e2e/dog-walking-platform.spec.ts`
+- [X] T159 Review SeaORM/PostgreSQL queries for pagination, spatial index use, transaction boundaries, and N+1 avoidance in `backend/crates/walkmanager-infrastructure/src/persistence/`
+- [X] T160 Review security handling for CUIL, identity documents, chats, bookings, incidents, secrets, JWT signing, WebSockets, and exception logs in `backend/crates/walkmanager-api/src/` and `backend/crates/walkmanager-infrastructure/src/`
+- [X] T161 Run Rust formatting, clippy, and backend tests using commands documented in `specs/001-dog-walking-platform/quickstart.md`
+- [X] T162 Run frontend linting, tests, and build using commands documented in `specs/001-dog-walking-platform/quickstart.md`
+- [X] T163 Run OpenAPI and contract validation and synchronize generated API docs with `backend/crates/walkmanager-api/src/openapi/`
+- [X] T164 Complete checklist review and record findings in `specs/001-dog-walking-platform/checklists/booking-domain.md`
+- [X] T165 Update ADRs for any architecture or dependency changes discovered during implementation in `docs/adr/001-dog-walking-platform.md`
 
-- [ ] T156 [P] Update OpenAPI contract coverage for all implemented HTTP routes and WebSocket event schemas in `specs/001-dog-walking-platform/contracts/openapi.yaml`
-- [ ] T157 [P] Update implementation notes and runbook details in `docs/operations/dog-walking-platform.md`
-- [ ] T158 [P] Add end-to-end smoke scenarios for registration, profile, search, booking, chat, review, and moderation in `frontend/tests/e2e/dog-walking-platform.spec.ts`
-- [ ] T159 Review SeaORM/PostgreSQL queries for pagination, spatial index use, transaction boundaries, and N+1 avoidance in `backend/crates/walkmanager-infrastructure/src/persistence/`
-- [ ] T160 Review security handling for CUIL, identity documents, chats, bookings, incidents, secrets, JWT signing, WebSockets, and exception logs in `backend/crates/walkmanager-api/src/` and `backend/crates/walkmanager-infrastructure/src/`
-- [ ] T161 Run Rust formatting, clippy, and backend tests using commands documented in `specs/001-dog-walking-platform/quickstart.md`
-- [ ] T162 Run frontend linting, tests, and build using commands documented in `specs/001-dog-walking-platform/quickstart.md`
-- [ ] T163 Run OpenAPI and contract validation and synchronize generated API docs with `backend/crates/walkmanager-api/src/openapi/`
-- [ ] T164 Complete checklist review and record findings in `specs/001-dog-walking-platform/checklists/booking-domain.md`
-- [ ] T165 Update ADRs for any architecture or dependency changes discovered during implementation in `docs/adr/001-dog-walking-platform.md`
+**Checkpoint**: 100% of tasks (T001 through T165) for feature `001-dog-walking-platform` are implemented, tested, and marked complete.
 
 ---
 
 ## Dependencies & Execution Order
 
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies.
-- **Foundational (Phase 2)**: Depends on Setup completion and blocks all user stories.
-- **User Stories (Phase 3+)**: Depend on Foundational completion.
-- **Polish (Phase 10)**: Depends on all selected user stories being complete.
-
-### User Story Dependencies
-
-- **US1 Register and Manage Identity (P1)**: Starts after Foundation and is the MVP.
 - **US2 Publish Walker Services (P1)**: Depends on US1 authentication and walker identity.
 - **US3 Search and Request a Walk (P1)**: Depends on US1 identities and US2 walker profiles/schedules.
 - **US4 Confirm and Manage Requests (P2)**: Depends on US3 bookings.
