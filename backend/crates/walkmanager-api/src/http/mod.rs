@@ -7,6 +7,7 @@ pub mod service_results;
 pub mod chats;
 pub mod notifications;
 pub mod reviews;
+pub mod moderation;
 
 pub use auth::*;
 pub use users::*;
@@ -17,3 +18,4 @@ pub use service_results::*;
 pub use chats::*;
 pub use notifications::*;
 pub use reviews::*;
+pub use moderation::*;
