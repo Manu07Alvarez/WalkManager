@@ -1,9 +1,9 @@
-use axum::{http::StatusCode, Json};
+use axum::{extract::Path, http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-// TODO: Add OpenAPI utoipa path annotations for /bookings
-// FIXME: Enforce RBAC middleware check to verify Customer role on booking creation
+// TODO: Add OpenAPI utoipa path annotations for /bookings lifecycle routes
+// FIXME: Enforce RBAC middleware check to verify Customer/Walker role on booking state changes
 
 #[derive(Debug, Deserialize)]
 pub struct CreateBookingRequest {
@@ -19,8 +19,14 @@ pub struct CreateBookingResponse {
     pub status: String,
 }
 
+#[derive(Debug, Serialize)]
+pub struct BookingActionResponse {
+    pub booking_id: Uuid,
+    pub status: String,
+}
+
 pub async fn create_booking_handler(
-    Json(payload): Json<CreateBookingRequest>,
+    Json(_payload): Json<CreateBookingRequest>,
 ) -> (StatusCode, Json<CreateBookingResponse>) {
     let booking_id = Uuid::new_v4();
     (
@@ -30,4 +36,31 @@ pub async fn create_booking_handler(
             status: "Pending".to_string(),
         }),
     )
+}
+
+pub async fn accept_booking_handler(
+    Path(booking_id): Path<Uuid>,
+) -> Json<BookingActionResponse> {
+    Json(BookingActionResponse {
+        booking_id,
+        status: "Accepted".to_string(),
+    })
+}
+
+pub async fn reject_booking_handler(
+    Path(booking_id): Path<Uuid>,
+) -> Json<BookingActionResponse> {
+    Json(BookingActionResponse {
+        booking_id,
+        status: "Rejected".to_string(),
+    })
+}
+
+pub async fn cancel_booking_handler(
+    Path(booking_id): Path<Uuid>,
+) -> Json<BookingActionResponse> {
+    Json(BookingActionResponse {
+        booking_id,
+        status: "Cancelled".to_string(),
+    })
 }

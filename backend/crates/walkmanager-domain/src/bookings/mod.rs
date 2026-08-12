@@ -16,6 +16,12 @@ pub enum BookingStatus {
     Disputed,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ServiceResultType {
+    Successful,
+    Failed,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WalkTimeRange {
     pub start_time: DateTime<Utc>,
@@ -39,6 +45,7 @@ pub struct Booking {
     pub time_range: WalkTimeRange,
     pub dog_count: u32,
     pub status: BookingStatus,
+    pub service_result: Option<ServiceResultType>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -62,8 +69,72 @@ impl Booking {
             time_range,
             dog_count,
             status: BookingStatus::Pending,
+            service_result: None,
             created_at: now,
             updated_at: now,
         })
+    }
+
+    pub fn accept(&mut self) -> Result<(), String> {
+        if self.status != BookingStatus::Pending {
+            return Err("Only Pending bookings can be accepted".to_string());
+        }
+        self.status = BookingStatus::Accepted;
+        self.updated_at = Utc::now();
+        Ok(())
+    }
+
+    pub fn reject(&mut self) -> Result<(), String> {
+        if self.status != BookingStatus::Pending {
+            return Err("Only Pending bookings can be rejected".to_string());
+        }
+        self.status = BookingStatus::Rejected;
+        self.updated_at = Utc::now();
+        Ok(())
+    }
+
+    pub fn cancel(&mut self) -> Result<(), String> {
+        if self.status == BookingStatus::Completed || self.status == BookingStatus::Cancelled {
+            return Err("Cannot cancel a completed or already cancelled booking".to_string());
+        }
+        self.status = BookingStatus::Cancelled;
+        self.updated_at = Utc::now();
+        Ok(())
+    }
+
+    pub fn expire(&mut self) -> Result<(), String> {
+        if self.status != BookingStatus::Pending {
+            return Err("Only Pending bookings can expire".to_string());
+        }
+        self.status = BookingStatus::Expired;
+        self.updated_at = Utc::now();
+        Ok(())
+    }
+
+    pub fn report_result(&mut self, result: ServiceResultType) -> Result<(), String> {
+        if self.status != BookingStatus::Accepted {
+            return Err("Service result can only be reported for Accepted bookings".to_string());
+        }
+        self.service_result = Some(result);
+        self.updated_at = Utc::now();
+        Ok(())
+    }
+
+    pub fn confirm_result(&mut self) -> Result<(), String> {
+        if self.service_result.is_none() {
+            return Err("No service result reported to confirm".to_string());
+        }
+        self.status = BookingStatus::Completed;
+        self.updated_at = Utc::now();
+        Ok(())
+    }
+
+    pub fn dispute_result(&mut self) -> Result<(), String> {
+        if self.service_result.is_none() {
+            return Err("No service result reported to dispute".to_string());
+        }
+        self.status = BookingStatus::Disputed;
+        self.updated_at = Utc::now();
+        Ok(())
     }
 }

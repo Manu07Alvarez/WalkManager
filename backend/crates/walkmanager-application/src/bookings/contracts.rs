@@ -14,6 +14,34 @@ pub struct CreateBookingCommand {
     pub dog_count: u32,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct AcceptBookingCommand {
+    pub booking_id: Uuid,
+    pub walker_id: Uuid,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct RejectBookingCommand {
+    pub booking_id: Uuid,
+    pub walker_id: Uuid,
+    pub reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CancelBookingCommand {
+    pub booking_id: Uuid,
+    pub user_id: Uuid,
+    pub reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ReportServiceResultCommand {
+    pub booking_id: Uuid,
+    pub walker_id: Uuid,
+    pub result: String,
+    pub notes: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BookingResponse {
     pub booking_id: Uuid,
@@ -23,5 +51,6 @@ pub struct BookingResponse {
     pub end_time: DateTime<Utc>,
     pub dog_count: u32,
     pub status: String,
+    pub service_result: Option<String>,
     pub created_at: DateTime<Utc>,
 }
