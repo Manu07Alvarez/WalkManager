@@ -4,6 +4,8 @@ pub mod walker_profiles;
 pub mod search;
 pub mod bookings;
 pub mod service_results;
+pub mod chats;
+pub mod notifications;
 
 pub use auth::*;
 pub use users::*;
@@ -11,3 +13,5 @@ pub use walker_profiles::*;
 pub use search::*;
 pub use bookings::*;
 pub use service_results::*;
+pub use chats::*;
+pub use notifications::*;

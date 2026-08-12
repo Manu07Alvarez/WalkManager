@@ -193,29 +193,33 @@
 
 ---
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+## Phase 7: User Story 5 - Chat and Notifications (Priority: P2)
 
-- [ ] T103 [P] [US5] Add OpenAPI contract tests for inquiry chat creation, inquiry chat messages, booking chat messages, notifications, and notification preference routes in `backend/crates/walkmanager-api/tests/chat_notification_contract.rs`
-- [ ] T104 [P] [US5] Add Rust domain tests for public inquiry chat, booking chat, participants, and notification entities in `backend/crates/walkmanager-domain/tests/chat_conversation.rs`
-- [ ] T105 [P] [US5] Add Rust application tests for chat access validation, inquiry rate limiting, historical booking chat access, and notification preferences in `backend/crates/walkmanager-application/tests/chat_notification_use_cases.rs`
-- [ ] T106 [P] [US5] Add WebSocket authorization, message delivery (within 5 seconds), booking update, notification delivery, and presence tests in `backend/crates/walkmanager-api/tests/websocket_realtime.rs`
-- [ ] T107 [P] [US5] Add SeaORM repository tests for chats, messages, notifications, and preferences in `backend/crates/walkmanager-infrastructure/tests/chat_notification_repository.rs`
-- [ ] T108 [P] [US5] Add frontend feature tests for inquiry chat, booking chat, WebSocket updates, presence, notification preferences, and notification list UI in `frontend/tests/features/chats/ChatAndNotifications.test.tsx`
+**Goal**: Customers and walkers can use public inquiry chats before booking and booking-specific chats after request creation, with persisted history, WebSocket updates, presence, and notifications.
+
+### Tests for User Story 5
+
+- [X] T103 [P] [US5] Add OpenAPI contract tests for inquiry chat creation, inquiry chat messages, booking chat messages, notifications, and notification preference routes in `backend/crates/walkmanager-api/tests/chat_notification_contract.rs`
+- [X] T104 [P] [US5] Add Rust domain tests for public inquiry chat, booking chat, participants, and notification entities in `backend/crates/walkmanager-domain/tests/chat_conversation.rs`
+- [X] T105 [P] [US5] Add Rust application tests for chat access validation, inquiry rate limiting, historical booking chat access, and notification preferences in `backend/crates/walkmanager-application/tests/chat_notification_use_cases.rs`
+- [X] T106 [P] [US5] Add WebSocket authorization, message delivery (within 5 seconds), booking update, notification delivery, and presence tests in `backend/crates/walkmanager-api/tests/websocket_realtime.rs`
+- [X] T107 [P] [US5] Add SeaORM repository tests for chats, messages, notifications, and preferences in `backend/crates/walkmanager-infrastructure/tests/chat_notification_repository.rs`
+- [X] T108 [P] [US5] Add frontend feature tests for inquiry chat, booking chat, WebSocket updates, presence, notification preferences, and notification list UI in `frontend/tests/features/chats/ChatAndNotifications.test.tsx`
 
 ### Implementation for User Story 5
 
-- [ ] T109 [P] [US5] Create PublicInquiryChat, BookingChatConversation, ChatMessage, Notification, and NotificationPreference domain models in `backend/crates/walkmanager-domain/src/chats/` and `backend/crates/walkmanager-domain/src/notifications/`
-- [ ] T110 [P] [US5] Create chat, WebSocket event, and notification command/query contracts in `backend/crates/walkmanager-application/src/chats/contracts.rs` and `backend/crates/walkmanager-application/src/notifications/contracts.rs`
-- [ ] T111 [US5] Implement public inquiry chat creation, ignore/archive behavior, and DragonflyDB-backed rate limiting use cases in `backend/crates/walkmanager-application/src/chats/public_inquiry.rs`; rate limits are deployment-configuration-driven (out of scope for this spec)
-- [ ] T112 [US5] Implement booking chat creation hook and historical access rules in `backend/crates/walkmanager-application/src/chats/booking_chats.rs`
-- [ ] T113 [US5] Implement send/list message use cases with participant and restriction validation in `backend/crates/walkmanager-application/src/chats/messages.rs`
-- [ ] T114 [US5] Implement notification preference, notification persistence, and dispatch preparation in `backend/crates/walkmanager-application/src/notifications/`
-- [ ] T115 [US5] Implement SeaORM entities and migrations for chats, messages, notifications, and notification preferences in `backend/crates/walkmanager-infrastructure/src/persistence/entities/chats.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
-- [ ] T116 [US5] Implement DragonflyDB rate limiter, notification coordination, and presence support in `backend/crates/walkmanager-infrastructure/src/caching/realtime_cache.rs`
-- [ ] T117 [US5] Implement Axum WebSocket handlers for chats, booking updates, notifications, and presence in `backend/crates/walkmanager-api/src/websockets/`
-- [ ] T118 [US5] Implement Axum chat and notification HTTP routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/chats.rs` and `backend/crates/walkmanager-api/src/http/notifications.rs`
-- [ ] T119 [US5] Implement frontend WebSocket client utilities for real-time updates within 5 seconds in `frontend/src/shared/realtime/`
-- [ ] T120 [US5] Implement inquiry chat, booking chat, notification preference settings, presence indicators, and notification UI in `frontend/src/features/chats/` and `frontend/src/features/notifications/`
+- [X] T109 [P] [US5] Create PublicInquiryChat, BookingChatConversation, ChatMessage, Notification, and NotificationPreference domain models in `backend/crates/walkmanager-domain/src/chats/` and `backend/crates/walkmanager-domain/src/notifications/`
+- [X] T110 [P] [US5] Create chat, WebSocket event, and notification command/query contracts in `backend/crates/walkmanager-application/src/chats/contracts.rs` and `backend/crates/walkmanager-application/src/notifications/contracts.rs`
+- [X] T111 [US5] Implement public inquiry chat creation, ignore/archive behavior, and DragonflyDB-backed rate limiting use cases in `backend/crates/walkmanager-application/src/chats/public_inquiry.rs`; rate limits are deployment-configuration-driven (out of scope for this spec)
+- [X] T112 [US5] Implement booking chat creation hook and historical access rules in `backend/crates/walkmanager-application/src/chats/booking_chats.rs`
+- [X] T113 [US5] Implement send/list message use cases with participant and restriction validation in `backend/crates/walkmanager-application/src/chats/messages.rs`
+- [X] T114 [US5] Implement notification preference, notification persistence, and dispatch preparation in `backend/crates/walkmanager-application/src/notifications/`
+- [X] T115 [US5] Implement SeaORM entities and migrations for chats, messages, notifications, and notification preferences in `backend/crates/walkmanager-infrastructure/src/persistence/entities/chats.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T116 [US5] Implement DragonflyDB rate limiter, notification coordination, and presence support in `backend/crates/walkmanager-infrastructure/src/caching/realtime_cache.rs`
+- [X] T117 [US5] Implement Axum WebSocket handlers for chats, booking updates, notifications, and presence in `backend/crates/walkmanager-api/src/websockets/`
+- [X] T118 [US5] Implement Axum chat and notification HTTP routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/chats.rs` and `backend/crates/walkmanager-api/src/http/notifications.rs`
+- [X] T119 [US5] Implement frontend WebSocket client utilities for real-time updates within 5 seconds in `frontend/src/shared/realtime/`
+- [X] T120 [US5] Implement inquiry chat, booking chat, notification preference settings, presence indicators, and notification UI in `frontend/src/features/chats/` and `frontend/src/features/notifications/`
 
 **Checkpoint**: User Story 5 is independently testable for real-time communication and notification workflows.
 
@@ -223,7 +227,6 @@
 
 ## Phase 8: User Story 6 - Complete Service Reviews (Priority: P3)
 
-**Goal**: Customers can submit moderated ratings and reviews only for bookings with eligible final Service Results, and walkers cannot reply.
 
 **Independent Test**: Assign Successful or Failed result, submit review, approve it through moderation, and confirm ineligible bookings cannot receive public reviews.
 
