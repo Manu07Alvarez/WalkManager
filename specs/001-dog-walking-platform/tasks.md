@@ -227,32 +227,29 @@
 
 ## Phase 8: User Story 6 - Complete Service Reviews (Priority: P3)
 
-
-**Independent Test**: Assign Successful or Failed result, submit review, approve it through moderation, and confirm ineligible bookings cannot receive public reviews.
+**Goal**: Customers can submit moderated ratings and reviews only for bookings with eligible final Service Results, and walkers cannot reply.
 
 ### Tests for User Story 6
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [ ] T121 [P] [US6] Add OpenAPI contract tests for review submission, public walker review display, and review moderation approve/reject routes in `backend/crates/walkmanager-api/tests/review_contract.rs`
-- [ ] T122 [P] [US6] Add Rust domain tests for review eligibility by Booking Status and Service Result in `backend/crates/walkmanager-domain/tests/review_eligibility.rs`
-- [ ] T123 [P] [US6] Add Rust application tests for moderation-required review submission and publication rules in `backend/crates/walkmanager-application/tests/review_moderation.rs`
-- [ ] T124 [P] [US6] Add Rust validation tests for rating and comment input in `backend/crates/walkmanager-application/tests/review_validation.rs`
-- [ ] T125 [P] [US6] Add SeaORM repository tests for Review persistence and public review query filtering in `backend/crates/walkmanager-infrastructure/tests/review_repository.rs`
-- [ ] T126 [P] [US6] Add frontend feature tests for review submission, rating display, and blocked review states in `frontend/tests/features/reviews/Reviews.test.tsx`
+- [X] T121 [P] [US6] Add OpenAPI contract tests for review submission, public walker review display, and review moderation approve/reject routes in `backend/crates/walkmanager-api/tests/review_contract.rs`
+- [X] T122 [P] [US6] Add Rust domain tests for review eligibility by Booking Status and Service Result in `backend/crates/walkmanager-domain/tests/review_eligibility.rs`
+- [X] T123 [P] [US6] Add Rust application tests for moderation-required review submission and publication rules in `backend/crates/walkmanager-application/tests/review_moderation.rs`
+- [X] T124 [P] [US6] Add Rust validation tests for rating and comment input in `backend/crates/walkmanager-application/tests/review_validation.rs`
+- [X] T125 [P] [US6] Add SeaORM repository tests for Review persistence and public review query filtering in `backend/crates/walkmanager-infrastructure/tests/review_repository.rs`
+- [X] T126 [P] [US6] Add frontend feature tests for review submission, rating display, and blocked review states in `frontend/tests/features/reviews/Reviews.test.tsx`
 
 ### Implementation for User Story 6
 
-- [ ] T127 [P] [US6] Create Review domain model and moderation status value object in `backend/crates/walkmanager-domain/src/reviews/`
-- [ ] T128 [P] [US6] Create review command/query contracts and public review summary contracts in `backend/crates/walkmanager-application/src/reviews/contracts.rs`
-- [ ] T129 [US6] Implement review eligibility and submit-for-moderation use cases in `backend/crates/walkmanager-application/src/reviews/`
-- [ ] T130 [US6] Implement review approval/rejection use cases in `backend/crates/walkmanager-application/src/moderation/reviews.rs`
-- [ ] T131 [US6] Implement SeaORM entities and migrations for Review in `backend/crates/walkmanager-infrastructure/src/persistence/entities/reviews.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
-- [ ] T132 [US6] Implement Axum review and moderation review routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/reviews.rs` and `backend/crates/walkmanager-api/src/http/moderation.rs`
-- [ ] T133 [US6] Extend walker public profile query with approved reviews and rating summary in `backend/crates/walkmanager-application/src/profiles/public_walker_profile.rs`
-- [ ] T134 [US6] Implement review API client and schemas in `frontend/src/features/reviews/api/`
-- [ ] T135 [US6] Implement rating display, review submission, and moderation pending states in `frontend/src/features/reviews/`
-- [ ] T136 [US6] Ensure walker UI exposes no review reply action in `frontend/src/features/walker-profile/pages/PublicWalkerProfilePage.tsx`
+- [X] T127 [P] [US6] Create Review domain model and moderation status value object in `backend/crates/walkmanager-domain/src/reviews/`
+- [X] T128 [P] [US6] Create review command/query contracts and public review summary contracts in `backend/crates/walkmanager-application/src/reviews/contracts.rs`
+- [X] T129 [US6] Implement review eligibility and submit-for-moderation use cases in `backend/crates/walkmanager-application/src/reviews/`
+- [X] T130 [US6] Implement review approval/rejection use cases in `backend/crates/walkmanager-application/src/moderation/reviews.rs`
+- [X] T131 [US6] Implement SeaORM entities and migrations for Review in `backend/crates/walkmanager-infrastructure/src/persistence/entities/reviews.rs` and `backend/crates/walkmanager-infrastructure/migration/src/`
+- [X] T132 [US6] Implement Axum review and moderation review routes with OpenAPI metadata in `backend/crates/walkmanager-api/src/http/reviews.rs` and `backend/crates/walkmanager-api/src/http/moderation.rs`
+- [X] T133 [US6] Extend walker public profile query with approved reviews and rating summary in `backend/crates/walkmanager-application/src/profiles/public_walker_profile.rs`
+- [X] T134 [US6] Implement review API client and schemas in `frontend/src/features/reviews/api/`
+- [X] T135 [US6] Implement rating display, review submission, and moderation pending states in `frontend/src/features/reviews/`
+- [X] T136 [US6] Ensure walker UI exposes no review reply action in `frontend/src/features/walker-profile/pages/PublicWalkerProfilePage.tsx`
 
 **Checkpoint**: User Story 6 is independently testable for review eligibility and moderation.
 
@@ -260,7 +257,6 @@
 
 ## Phase 9: User Story 7 - Track Reliability and Incidents (Priority: P3)
 
-**Goal**: The platform records reliability incidents and lets Moderators manage reports, disputes, restrictions, visibility reductions, and temporary suspensions.
 
 **Independent Test**: Record incidents for both roles, apply restriction thresholds, resolve a dispute as Moderator, verify suspended walkers are hidden from search, and verify restricted accounts lose booking or messaging access.
 
