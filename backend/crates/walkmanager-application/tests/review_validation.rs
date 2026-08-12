@@ -6,5 +6,5 @@
 #[test]
 fn test_rating_bounds_validation() {
     let rating = 5;
-    assert!(rating >= 1 && rating <= 5);
+    assert!((1..=5).contains(&rating));
 }

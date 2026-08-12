@@ -32,7 +32,7 @@ impl Review {
         rating: u8,
         comment: String,
     ) -> Result<Self, String> {
-        if rating < 1 || rating > 5 {
+        if !(1..=5).contains(&rating) {
             return Err("Rating score must be between 1 and 5".to_string());
         }
         if comment.trim().len() < 10 {
