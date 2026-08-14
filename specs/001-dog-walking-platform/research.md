@@ -26,11 +26,11 @@
 
 ## Frontend Architecture
 
-**Decision**: Use React with TypeScript and feature-based folders, supported by Tailwind CSS, shadcn/ui, TanStack Query, React Hook Form, and Zod.
+**Decision**: Use React with TypeScript and feature-based folders, supported by Tailwind CSS, Lucide Icons (`lucide-react`), `motion` (Framer Motion), `pretext`, TanStack Query, React Hook Form, and Zod.
 
-**Rationale**: The existing plan and user direction retain React. Feature organization aligns with auth, search, bookings, chats, reviews, moderation, and notifications. TanStack Query handles server-state freshness, React Hook Form and Zod support form UX, and Tailwind/shadcn provide consistent responsive UI primitives.
+**Rationale**: The existing plan and user direction retain React. Feature organization aligns with auth, search, bookings, chats, reviews, moderation, and notifications. TanStack Query handles server-state freshness, React Hook Form and Zod support form UX, Lucide Icons (`lucide-react`) provides consistent vector iconography primitives across all views, and `motion` + `pretext` drive smooth layout morphing, responsive UI component transitions, interactive banners, and dynamic text rendering.
 
-**Alternatives considered**: A global page/component split was rejected because workflows are feature-heavy. Replacing backend validation with shared frontend validation was rejected because backend validation must remain authoritative.
+**Alternatives considered**: A global page/component split was rejected because workflows are feature-heavy. Replacing backend validation with shared frontend validation was rejected because backend validation must remain authoritative. Inline SVG strings without a dedicated icon library were rejected because Lucide Icons provides standardized, customizable icon components.
 
 ## Persistence and Geospatial Search
 
