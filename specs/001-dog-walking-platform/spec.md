@@ -32,6 +32,11 @@
 - Q: What is the timing requirement for real-time chat updates? -> A: 95% of availability updates shall be reflected in the user interface within 5 seconds of the underlying data change.
 - Q: What viewport widths must be supported for responsive UI without horizontal scrolling? -> A: 90% of users shall be able to complete the core flow without horizontal scrolling on supported viewports: 375px, 768px, and 1024px widths.
 
+### Session 2026-08-14
+
+- Q: What libraries and techniques should be used for frontend animations, layout morphing, responsive UI, interactive banners, and dynamic text? -> A: The frontend shall utilize `motion` and `pretext` for animations, layout morphing, responsive UI transitions, interactive banners, and dynamic text rendering.
+- Q: What icon library must be used for frontend iconography? -> A: The frontend user interface shall use the Lucide Icons library (`lucide-react`) for all application icons.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Register and Manage Identity (Priority: P1)
@@ -238,7 +243,7 @@ The platform tracks no-shows, late cancellations, disputed services, repeated se
 - **FR-054**: Approved ratings and reviews MUST be publicly visible on Dog Walker profiles.
 - **FR-055**: Ratings MUST use a visual scoring system such as stars, dog treats, or similar dog-themed indicators.
 - **FR-056**: Dog Walkers MUST NOT be able to reply to customer reviews.
-- **FR-057**: The system MUST provide responsive user interfaces for desktop and mobile devices.
+- **FR-057**: The system MUST provide responsive user interfaces for desktop and mobile devices, utilizing `motion` and `pretext` for smooth animations, layout morphing, interactive banners, dynamic text, and responsive component transitions, and using the Lucide Icons library (`lucide-react`) for all application iconography.
 - **FR-058**: The system MUST persist users, bookings, chats, reviews, schedules, availability data, service results, cancellations, restrictions, suspensions, and incident records.
 - **FR-059**: The system MUST validate all external input before processing it.
 - **FR-060**: The system MUST protect sensitive personal information from unauthorized viewing or modification.

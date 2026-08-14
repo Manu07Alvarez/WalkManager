@@ -82,6 +82,7 @@ where
     }
 }
 
+#[allow(clippy::result_large_err)]
 pub fn require_role(expected: &str) -> impl Fn(AuthContext) -> Result<AuthContext, Response> {
     let expected = expected.to_string();
     move |ctx| {

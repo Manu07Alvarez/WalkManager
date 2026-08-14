@@ -7,7 +7,7 @@ use std::time::Duration;
 use super::{Cache, CacheError};
 
 pub struct NotificationQueue {
-    pending: Arc<RwLock<HashMap<String, Vec<NotificationMessage>>>,
+    pending: Arc<RwLock<HashMap<String, Vec<NotificationMessage>>>>,
 }
 
 impl NotificationQueue {

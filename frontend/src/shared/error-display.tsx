@@ -1,4 +1,4 @@
-import type { ValidationError } from '../validation/schemas';
+import { ValidationError } from './validation';
 
 export const ErrorDisplay = ({ error }: { error: string | ValidationError[] }) => {
   if (typeof error === 'string') {

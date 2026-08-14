@@ -4,6 +4,8 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+walkmanager-domain = { path = "../walkmanager-domain" }
+walkmanager-application = { path = "../walkmanager-application" }
 serde.workspace = true
 tokio.workspace = true
 uuid = { workspace = true, features = ["v4"] }
@@ -11,6 +13,10 @@ bcrypt.workspace = true
 sea-orm = { version = "0.12", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
 sea-orm-migration.workspace = true
 sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-rustls"] }
+serde_json.workspace = true
+async-trait = "0.1"
+thiserror.workspace = true
+chrono = { version = "0.4", features = ["serde"] }
 
 [dev-dependencies]
 tokio.workspace = true
