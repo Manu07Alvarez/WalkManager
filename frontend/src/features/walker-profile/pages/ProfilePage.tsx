@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { User, Edit3, Save, MapPin, Star, Clock, Calendar, CheckCircle2 } from 'lucide-react';
+import { User, Edit3, Save, MapPin, Star, Clock, Calendar, CheckCircle2, Loader2 } from 'lucide-react';
 import { AuthUser } from '../../auth/api/authApi';
+import { updateMyWalkerProfile } from '../api/walkerProfileApi';
 
 interface Schedule {
   day: string;
@@ -12,6 +13,7 @@ const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', '
 
 export const ProfilePage: React.FC = () => {
   const [editing, setEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(() => {
     try {
       const stored = localStorage.getItem('user_info');
@@ -52,12 +54,54 @@ export const ProfilePage: React.FC = () => {
     }
   }, []);
 
-  const schedules: Schedule[] = [
-    { day: 'Lunes', from: '08:00', to: '12:00' },
-    { day: 'Miércoles', from: '08:00', to: '12:00' },
-    { day: 'Viernes', from: '14:00', to: '18:00' },
-    { day: 'Sábado', from: '09:00', to: '14:00' },
-  ];
+  const toggleDay = (day: string) => {
+    if (!editing) return;
+    setProfile((prev) => {
+      const exists = prev.availableDays.includes(day);
+      const nextDays = exists
+        ? prev.availableDays.filter((d) => d !== day)
+        : [...prev.availableDays, day];
+      return { ...prev, availableDays: nextDays };
+    });
+  };
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    try {
+      const updated = await updateMyWalkerProfile({
+        name: profile.name,
+        zone: profile.zone,
+        description: profile.description,
+        maxDogs: profile.maxDogs,
+        pricePerService: profile.pricePerService,
+        dogTypes: profile.dogTypes,
+        availableDays: profile.availableDays,
+      });
+
+      if (user) {
+        const updatedUser: AuthUser = {
+          ...user,
+          full_name: updated.name || profile.name,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user_info', JSON.stringify(updatedUser));
+        window.dispatchEvent(new Event('auth-changed'));
+      }
+
+      setEditing(false);
+      alert('¡Perfil actualizado con éxito en el backend!');
+    } catch {
+      alert('Error al guardar los cambios de perfil.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const schedules: Schedule[] = profile.availableDays.map((day) => ({
+    day,
+    from: '08:00',
+    to: '14:00',
+  }));
 
   const getRoleLabel = (role: string) => {
     switch (role) {
@@ -82,13 +126,23 @@ export const ProfilePage: React.FC = () => {
             Información de la cuenta de {profile.name} ({getRoleLabel(profile.role)})
           </p>
         </div>
-        <button
-          onClick={() => setEditing(!editing)}
-          className={editing ? 'btn-brand py-2.5 px-5 text-xs flex items-center gap-2' : 'btn-ghost py-2.5 px-5 text-xs flex items-center gap-2'}
-        >
-          {editing ? <Save className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
-          {editing ? 'Guardar cambios' : 'Editar perfil'}
-        </button>
+        {editing ? (
+          <button
+            onClick={handleSaveProfile}
+            disabled={isSaving}
+            className="btn-brand py-2.5 px-5 text-xs flex items-center gap-2"
+          >
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Guardar cambios
+          </button>
+        ) : (
+          <button
+            onClick={() => setEditing(true)}
+            className="btn-ghost py-2.5 px-5 text-xs flex items-center gap-2"
+          >
+            <Edit3 className="w-4 h-4" /> Editar perfil
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -98,11 +152,28 @@ export const ProfilePage: React.FC = () => {
             <div className="w-24 h-24 rounded-full bg-[#005da7] flex items-center justify-center text-3xl font-headline font-bold text-white shadow-md mb-4">
               {profile.name.charAt(0).toUpperCase()}
             </div>
-            <h2 className="font-headline font-bold text-[#161d1f] text-lg">{profile.name}</h2>
+            {editing ? (
+              <input
+                value={profile.name}
+                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                className="input-field text-center font-bold font-headline text-base mb-2"
+              />
+            ) : (
+              <h2 className="font-headline font-bold text-[#161d1f] text-lg">{profile.name}</h2>
+            )}
             <p className="text-xs text-[#005da7] font-bold mt-0.5">{getRoleLabel(profile.role)}</p>
-            <p className="text-xs text-[#414751] flex items-center gap-1 mt-1 font-body">
-              <MapPin className="w-3.5 h-3.5 text-[#005da7]" /> {profile.zone}
-            </p>
+            {editing ? (
+              <input
+                value={profile.zone}
+                onChange={(e) => setProfile({ ...profile, zone: e.target.value })}
+                className="input-field text-center text-xs mt-2"
+                placeholder="Zona / Barrio"
+              />
+            ) : (
+              <p className="text-xs text-[#414751] flex items-center gap-1 mt-1 font-body">
+                <MapPin className="w-3.5 h-3.5 text-[#005da7]" /> {profile.zone}
+              </p>
+            )}
             <div className="mt-4 flex gap-1 justify-center text-[#feae2c]">
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star key={s} className="w-4 h-4 fill-current" />
@@ -113,18 +184,58 @@ export const ProfilePage: React.FC = () => {
 
           <div className="card-connection p-5 space-y-3 bg-white border-[#dde4e6]">
             <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider">Detalles de Cuenta</p>
-            {[
-              { label: 'Email', value: profile.email },
-              { label: 'Rol', value: profile.role },
-              { label: 'Max. perros simultáneos', value: `${profile.maxDogs} 🐕` },
-              { label: 'Precio por servicio', value: `$${profile.pricePerService.toLocaleString()}` },
-              { label: 'Tipos de perros', value: profile.dogTypes },
-            ].map((stat) => (
-              <div key={stat.label} className="flex justify-between items-center text-xs">
-                <span className="text-[#414751] font-body">{stat.label}</span>
-                <span className="font-headline font-bold text-[#161d1f] truncate max-w-[150px]">{stat.value}</span>
+
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-[#414751] font-body">Email</span>
+                <span className="font-headline font-bold text-[#161d1f] truncate max-w-[150px]">{profile.email}</span>
               </div>
-            ))}
+
+              <div className="flex justify-between items-center">
+                <span className="text-[#414751] font-body">Max. perros simultáneos</span>
+                {editing ? (
+                  <input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={profile.maxDogs}
+                    onChange={(e) => setProfile({ ...profile, maxDogs: Number(e.target.value) })}
+                    className="input-field w-20 text-center py-1 text-xs"
+                  />
+                ) : (
+                  <span className="font-headline font-bold text-[#161d1f]">{profile.maxDogs} 🐕</span>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-[#414751] font-body">Precio por servicio ($ ARS)</span>
+                {editing ? (
+                  <input
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={profile.pricePerService}
+                    onChange={(e) => setProfile({ ...profile, pricePerService: Number(e.target.value) })}
+                    className="input-field w-24 text-center py-1 text-xs"
+                  />
+                ) : (
+                  <span className="font-headline font-bold text-[#161d1f]">${profile.pricePerService.toLocaleString()}</span>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-[#414751] font-body">Tipos de perros</span>
+                {editing ? (
+                  <input
+                    value={profile.dogTypes}
+                    onChange={(e) => setProfile({ ...profile, dogTypes: e.target.value })}
+                    className="input-field w-32 py-1 text-xs"
+                  />
+                ) : (
+                  <span className="font-headline font-bold text-[#161d1f] truncate max-w-[140px]">{profile.dogTypes}</span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -144,38 +255,52 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="card-connection p-6 bg-white border-[#dde4e6]">
-            <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> Horario disponible
-            </p>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider flex items-center gap-2">
+                <Calendar className="w-4 h-4" /> Días de disponibilidad
+              </p>
+              {editing && (
+                <span className="text-[11px] text-[#005da7] font-semibold">¡Hacé clic en un día para activar/desactivar!</span>
+              )}
+            </div>
+
+            {/* Interactive Day Selection Grid */}
             <div className="grid grid-cols-7 gap-1.5 mb-5">
               {DAYS.map((day) => {
                 const active = profile.availableDays.includes(day);
                 return (
-                  <div
+                  <button
                     key={day}
-                    className={`rounded-xl p-2 text-center transition-all duration-200 ${
+                    type="button"
+                    onClick={() => toggleDay(day)}
+                    className={`rounded-xl p-2.5 text-center transition-all duration-200 ${
                       active
-                        ? 'bg-[#005da7] text-white shadow-sm font-headline font-bold'
-                        : 'bg-[#eef5f7] border border-[#dde4e6] text-[#414751]'
-                    }`}
+                        ? 'bg-[#005da7] text-white shadow-sm font-headline font-bold scale-105'
+                        : 'bg-[#eef5f7] border border-[#dde4e6] text-[#414751] hover:border-[#005da7]/50'
+                    } ${editing ? 'cursor-pointer hover:scale-110' : 'cursor-default'}`}
                   >
-                    <span className="text-[10px] block">{day.slice(0, 3)}</span>
-                  </div>
+                    <span className="text-xs block font-bold">{day.slice(0, 3)}</span>
+                  </button>
                 );
               })}
             </div>
+
             <div className="space-y-2.5">
-              {schedules.map((s) => (
-                <div key={s.day} className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-[#eef5f7] border border-[#dde4e6]">
-                  <span className="font-headline font-bold text-[#161d1f] w-24">{s.day}</span>
-                  <span className="text-[#414751] flex items-center gap-1 font-body">
-                    <Clock className="w-3 h-3 text-[#005da7]" /> {s.from} → {s.to}
-                  </span>
-                  <span className="badge badge-accepted">
-                    <CheckCircle2 className="w-3 h-3" /> Disponible
-                  </span>
-                </div>
-              ))}
+              {schedules.length === 0 ? (
+                <p className="text-xs text-[#414751] italic text-center py-4">No hay días seleccionados como disponibles.</p>
+              ) : (
+                schedules.map((s) => (
+                  <div key={s.day} className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-[#eef5f7] border border-[#dde4e6]">
+                    <span className="font-headline font-bold text-[#161d1f] w-24">{s.day}</span>
+                    <span className="text-[#414751] flex items-center gap-1 font-body">
+                      <Clock className="w-3 h-3 text-[#005da7]" /> {s.from} → {s.to}
+                    </span>
+                    <span className="badge badge-accepted">
+                      <CheckCircle2 className="w-3 h-3" /> Disponible
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
