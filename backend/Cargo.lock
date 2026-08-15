@@ -3033,7 +3033,9 @@ dependencies = [
  "axum",
  "axum-extra",
  "chrono",
+ "dotenvy",
  "jsonwebtoken",
+ "sea-orm",
  "serde",
  "serde_json",
  "thiserror 1.0.69",
@@ -3045,6 +3047,9 @@ dependencies = [
  "tracing-subscriber",
  "utoipa",
  "uuid",
+ "walkmanager-application",
+ "walkmanager-domain",
+ "walkmanager-infrastructure",
 ]
 
 [[package]]
@@ -3093,6 +3098,14 @@ dependencies = [
  "uuid",
  "walkmanager-application",
  "walkmanager-domain",
+ "walkmanager-migration",
+]
+
+[[package]]
+name = "walkmanager-migration"
+version = "0.1.0"
+dependencies = [
+ "sea-orm-migration",
 ]
 
 [[package]]
