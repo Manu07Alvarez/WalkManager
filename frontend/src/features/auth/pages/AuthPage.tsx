@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Dog, Key, UserCheck, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Key, UserCheck, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { registerWalkerSchema, RegisterWalkerInput } from '../api/authApi';
 
 // TODO: Connect to real auth API - currently uses mock validation only
@@ -69,9 +69,7 @@ export const AuthPage: React.FC = () => {
             <ArrowLeft className="w-4 h-4" /> Volver al inicio
           </button>
           <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#005da7] flex items-center justify-center text-white shadow-md">
-              <Dog className="w-7 h-7" />
-            </div>
+            <img src="/icon.svg" alt="WalkManager Logo" className="w-14 h-14 object-contain drop-shadow-sm" />
           </div>
           <h1 className="text-3xl font-headline font-bold text-[#005da7]">WalkManager</h1>
           <p className="text-sm text-[#414751] mt-1 font-body">Tu plataforma de paseos profesionales</p>

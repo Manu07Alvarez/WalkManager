@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
-import { Search, Calendar, User, Star, Shield, Dog } from 'lucide-react';
+import { Search, Calendar, User, Star, Shield } from 'lucide-react';
 import { AnimatedPage } from './AnimatedPage';
 
 // TODO: Add notification bell with unread badge count from notifications API
@@ -26,12 +26,10 @@ export const AppLayout: React.FC = () => {
       <aside className="hidden md:flex flex-col w-64 shrink-0 border-r border-[#dde4e6] bg-white shadow-level1">
         {/* Logo */}
         <div
-          className="flex items-center gap-3 px-6 py-5 border-b border-[#dde4e6] cursor-pointer"
+          className="flex items-center gap-3 px-6 py-5 border-b border-[#dde4e6] cursor-pointer hover:opacity-90 transition-opacity"
           onClick={() => navigate('/')}
         >
-          <div className="w-9 h-9 rounded-2xl bg-[#005da7] flex items-center justify-center text-white shadow-sm">
-            <Dog className="w-5 h-5" />
-          </div>
+          <img src="/icon.svg" alt="WalkManager Logo" className="w-9 h-9 object-contain drop-shadow-sm" />
           <div>
             <span className="text-base font-headline font-bold text-[#005da7]">WalkManager</span>
             <p className="text-[10px] text-[#414751] font-body -mt-0.5">Plataforma de Paseadores</p>
@@ -73,8 +71,8 @@ export const AppLayout: React.FC = () => {
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/95 backdrop-blur border-b border-[#dde4e6] shadow-sm">
-        <div className="flex items-center gap-2" onClick={() => navigate('/')}>
-          <Dog className="w-5 h-5 text-[#005da7]" />
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <img src="/icon.svg" alt="WalkManager Logo" className="w-7 h-7 object-contain" />
           <span className="text-sm font-bold font-headline text-[#005da7]">WalkManager</span>
         </div>
         <div className="flex items-center gap-1">
