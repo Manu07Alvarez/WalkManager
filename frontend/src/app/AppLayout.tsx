@@ -1,9 +1,9 @@
-use React, { useEffect, useState } from 'react';
-use { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-use { AnimatePresence } from 'motion/react';
-use { Search, Calendar, User, Star, Shield, LogOut } from 'lucide-react';
-use { AnimatedPage } from './AnimatedPage';
-use { AuthUser } from '../features/auth/api/authApi';
+import React, { useEffect, useState } from 'react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'motion/react';
+import { Search, Calendar, User, Star, Shield, LogOut } from 'lucide-react';
+import { AnimatedPage } from './AnimatedPage';
+import { AuthUser } from '../features/auth/api/authApi';
 
 interface NavItem {
   to: string;
