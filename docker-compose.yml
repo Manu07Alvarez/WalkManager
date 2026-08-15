@@ -76,6 +76,38 @@ services:
     networks:
       - walkmanager-network
 
+  # =========================================================================
+  # DbGate (Web GUI Database Client for PostgreSQL & DragonflyDB/Redis)
+  # =========================================================================
+  dbgate:
+    image: dbgate/dbgate:latest
+    container_name: walkmanager-dbgate
+    restart: unless-stopped
+    ports:
+      - "${DBGATE_PORT:-3000}:3000" # Web UI accessible at http://localhost:3000
+    environment:
+      CONNECTIONS: "postgres,dragonfly"
+      LABEL_postgres: "PostgreSQL (WalkManager)"
+      ENGINE_postgres: "postgres@dbgate-plugin-postgres"
+      SERVER_postgres: "walkmanager-postgres"
+      PORT_postgres: "5432"
+      USER_postgres: "postgres"
+      PASSWORD_postgres: "postgres"
+      DATABASE_postgres: "walkmanager"
+      LABEL_dragonfly: "DragonflyDB / Redis"
+      ENGINE_dragonfly: "redis@dbgate-plugin-redis"
+      SERVER_dragonfly: "walkmanager-dragonfly"
+      PORT_dragonfly: "6379"
+    volumes:
+      - dbgate_data:/root/.dbgate
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dragonfly:
+        condition: service_healthy
+    networks:
+      - walkmanager-network
+
 volumes:
   postgres_data:
     name: walkmanager_postgres_data
@@ -83,6 +115,8 @@ volumes:
     name: walkmanager_dragonfly_data
   seaweedfs_data:
     name: walkmanager_seaweedfs_data
+  dbgate_data:
+    name: walkmanager_dbgate_data
 
 networks:
   walkmanager-network:
