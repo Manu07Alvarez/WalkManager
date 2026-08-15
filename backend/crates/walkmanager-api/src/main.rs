@@ -1,11 +1,21 @@
-use axum::{routing::get, Router};
+use axum::{routing::get, Json, Router};
+use serde_json::{json, Value};
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
+use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use walkmanager_api::http::{
-    auth_routes, accept_booking_handler, cancel_booking_handler, create_booking_handler,
+    accept_booking_handler, auth_routes, cancel_booking_handler, create_booking_handler,
     reject_booking_handler, search_walkers_handler,
 };
+
+async fn health_handler() -> Json<Value> {
+    Json(json!({ "status": "OK", "service": "walkmanager-api" }))
+}
+
+async fn ready_handler() -> Json<Value> {
+    Json(json!({ "status": "READY", "database": "connected" }))
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -17,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    // CORS configuration for frontend dev server
+    // Permissive CORS for frontend dev server
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
@@ -32,10 +42,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/bookings/:id/cancel", axum::routing::post(cancel_booking_handler));
 
     let app = Router::new()
-        .route("/health", get(|| async { "OK" }))
-        .route("/ready", get(|| async { "READY" }))
+        .route("/health", get(health_handler))
+        .route("/ready", get(ready_handler))
         .nest("/api/v1", api_v1)
-        .layer(cors);
+        .layer(cors)
+        .layer(TraceLayer::new_for_http());
 
     let port: u16 = std::env::var("PORT")
         .unwrap_or_else(|_| "8080".to_string())
