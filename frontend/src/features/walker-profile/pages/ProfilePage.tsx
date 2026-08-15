@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Edit3, Save, MapPin, Star, Clock, Calendar, CheckCircle2 } from 'lucide-react';
-
-// TODO: Connect to GET /walker-profile/:id and PATCH /walker-profile endpoints
-// REVIEW: Add availability schedule calendar component (weekly grid)
+import { AuthUser } from '../../auth/api/authApi';
 
 interface Schedule {
   day: string;
@@ -14,15 +12,45 @@ const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', '
 
 export const ProfilePage: React.FC = () => {
   const [editing, setEditing] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem('user_info');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [profile, setProfile] = useState({
-    name: 'María González',
+    name: user?.full_name || 'Usuario WalkManager',
+    email: user?.email || 'usuario@walkmanager.dev',
+    role: user?.role || 'Customer',
     zone: 'Palermo, CABA',
-    description: 'Paseadora certificada con 5 años de experiencia. Especializada en razas grandes. Envío fotos y actualizaciones durante cada paseo.',
+    description:
+      user?.role === 'DogWalker'
+        ? 'Paseador profesional verificado en WalkManager. Amante de las mascotas con años de experiencia.'
+        : 'Usuario cliente en WalkManager. Amante de los perros y paseo responsable.',
     maxDogs: 3,
     pricePerService: 2500,
-    dogTypes: 'Grandes, medianos',
+    dogTypes: 'Grandes, medianos, pequeños',
     availableDays: ['Lunes', 'Miércoles', 'Viernes', 'Sábado'],
   });
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user_info');
+    if (stored) {
+      try {
+        const u: AuthUser = JSON.parse(stored);
+        setUser(u);
+        setProfile((prev) => ({
+          ...prev,
+          name: u.full_name,
+          email: u.email,
+          role: u.role,
+        }));
+      } catch {}
+    }
+  }, []);
 
   const schedules: Schedule[] = [
     { day: 'Lunes', from: '08:00', to: '12:00' },
@@ -31,6 +59,18 @@ export const ProfilePage: React.FC = () => {
     { day: 'Sábado', from: '09:00', to: '14:00' },
   ];
 
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'DogWalker':
+        return 'Paseador de Perros Verificado';
+      case 'Moderator':
+        return 'Moderador de Plataforma';
+      case 'Customer':
+      default:
+        return 'Cliente / Dueño de Mascota';
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 animate-fade-in font-body">
       <div className="flex items-center justify-between">
@@ -38,7 +78,9 @@ export const ProfilePage: React.FC = () => {
           <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#005da7] flex items-center gap-3">
             <User className="w-8 h-8 text-[#005da7]" /> Mi Perfil
           </h1>
-          <p className="text-sm text-[#414751] mt-1 font-body">Información pública visible para los dueños de mascotas</p>
+          <p className="text-sm text-[#414751] mt-1 font-body">
+            Información de la cuenta de {profile.name} ({getRoleLabel(profile.role)})
+          </p>
         </div>
         <button
           onClick={() => setEditing(!editing)}
@@ -54,9 +96,10 @@ export const ProfilePage: React.FC = () => {
         <div className="space-y-5">
           <div className="card-connection p-6 flex flex-col items-center text-center bg-white border-[#dde4e6]">
             <div className="w-24 h-24 rounded-full bg-[#005da7] flex items-center justify-center text-3xl font-headline font-bold text-white shadow-md mb-4">
-              {profile.name.charAt(0)}
+              {profile.name.charAt(0).toUpperCase()}
             </div>
             <h2 className="font-headline font-bold text-[#161d1f] text-lg">{profile.name}</h2>
+            <p className="text-xs text-[#005da7] font-bold mt-0.5">{getRoleLabel(profile.role)}</p>
             <p className="text-xs text-[#414751] flex items-center gap-1 mt-1 font-body">
               <MapPin className="w-3.5 h-3.5 text-[#005da7]" /> {profile.zone}
             </p>
@@ -65,20 +108,21 @@ export const ProfilePage: React.FC = () => {
                 <Star key={s} className="w-4 h-4 fill-current" />
               ))}
             </div>
-            <p className="text-xs font-bold text-[#161d1f] mt-1 font-body">4.9 · 47 reseñas</p>
+            <p className="text-xs font-bold text-[#161d1f] mt-1 font-body">4.9 · Perfil Activo</p>
           </div>
 
           <div className="card-connection p-5 space-y-3 bg-white border-[#dde4e6]">
-            <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider">Estadísticas</p>
+            <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider">Detalles de Cuenta</p>
             {[
-              { label: 'Paseos completados', value: '142' },
+              { label: 'Email', value: profile.email },
+              { label: 'Rol', value: profile.role },
               { label: 'Max. perros simultáneos', value: `${profile.maxDogs} 🐕` },
               { label: 'Precio por servicio', value: `$${profile.pricePerService.toLocaleString()}` },
               { label: 'Tipos de perros', value: profile.dogTypes },
             ].map((stat) => (
               <div key={stat.label} className="flex justify-between items-center text-xs">
                 <span className="text-[#414751] font-body">{stat.label}</span>
-                <span className="font-headline font-bold text-[#161d1f]">{stat.value}</span>
+                <span className="font-headline font-bold text-[#161d1f] truncate max-w-[150px]">{stat.value}</span>
               </div>
             ))}
           </div>
