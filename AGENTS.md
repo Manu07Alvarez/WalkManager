@@ -6,3 +6,4 @@ specs/001-dog-walking-platform/plan.md
 
 ## User Preferences & PR Guidelines
 - **ALWAYS CREATE A NEW PR**: Do NOT update or push to existing Pull Requests unless explicitly instructed by the user. Always create a new isolated branch (e.g. `feature/`, `fix/`, `docs/`) and open a new Pull Request for subsequent tasks.
+- **ALWAYS USE /speckit-git-commit**: Always use the `/speckit-git-commit` skill workflow for staging, auditing TODO-TREE tags, committing changes, and opening Pull Requests.
