@@ -31,7 +31,35 @@ export interface WalkerSearchResult {
   public_description: string;
 }
 
+// 🚀 In-Memory Search Cache for Geospatial Proximity Queries
+interface CacheEntry {
+  timestamp: number;
+  data: WalkerSearchResult[];
+}
+
+const SEARCH_CACHE = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 60_000; // 60 seconds TTL
+
+export function getSearchCacheKey(params: SearchQueryParams): string {
+  const lat = params.latitude.toFixed(3);
+  const lng = params.longitude.toFixed(3);
+  const radius = params.radiusKm.toFixed(1);
+  return `geo_search:${lat}:${lng}:${radius}`;
+}
+
+export function clearSearchCache(): void {
+  SEARCH_CACHE.clear();
+}
+
 export async function searchWalkers(params: SearchQueryParams): Promise<WalkerSearchResult[]> {
+  const cacheKey = getSearchCacheKey(params);
+  const now = Date.now();
+  const cached = SEARCH_CACHE.get(cacheKey);
+
+  if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+
   const response = await apiClient.get('/v1/walkers/search', {
     params: {
       latitude: params.latitude,
@@ -39,7 +67,10 @@ export async function searchWalkers(params: SearchQueryParams): Promise<WalkerSe
       radius_km: params.radiusKm,
     },
   });
-  return response.data.walkers || response.data;
+
+  const result = response.data.walkers || response.data;
+  SEARCH_CACHE.set(cacheKey, { timestamp: now, data: result });
+  return result;
 }
 
 export async function createBookingRequest(payload: CreateBookingPayload) {
