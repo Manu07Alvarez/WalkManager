@@ -103,7 +103,7 @@ export const ModerationPage: React.FC = () => {
           <Shield className="w-8 h-8 text-[#005da7]" /> Panel de Moderación
         </h1>
         <p className="text-sm text-[#414751] mt-1 font-body">
-          Gestión transparente de reportes, disputas y restricciones de cuentas (FR-063)
+          Gestión de reportes, disputas y restricciones de cuentas
         </p>
       </div>
 
@@ -157,7 +157,7 @@ export const ModerationPage: React.FC = () => {
       {isLoading ? (
         <div className="card-connection p-12 text-center bg-white border-[#dde4e6]">
           <Loader2 className="w-8 h-8 text-[#005da7] animate-spin mx-auto mb-3" />
-          <p className="font-headline font-bold text-base text-[#161d1f]">Cargando incidencias desde el servidor API...</p>
+          <p className="font-headline font-bold text-base text-[#161d1f]">Cargando incidencias...</p>
         </div>
       ) : (
         <>

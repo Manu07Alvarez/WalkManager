@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, MapPin, Star, Dog, Filter, CheckCircle2, XCircle, Loader2, Calendar, Clock } from 'lucide-react';
+import { Search, MapPin, Star, Dog, Filter, CheckCircle2, Loader2, Calendar, Clock } from 'lucide-react';
 import { searchWalkers, createBookingRequest, WalkerSearchResult } from '../api/searchApi';
+import { NotificationModal, NotificationType } from '../../../shared/components/NotificationModal';
 
 const StarRating: React.FC<{ value: number }> = ({ value }) => (
   <span className="flex items-center gap-0.5 text-[#feae2c]">
@@ -21,6 +22,26 @@ export const SearchWalkersPage: React.FC = () => {
   const [dogCount, setDogCount] = useState(1);
   const [bookingSuccess, setBookingSuccess] = useState<string | null>(null);
   const [isBooking, setIsBooking] = useState(false);
+
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: NotificationType;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+
+  const showModal = (title: string, message: string, type: NotificationType = 'info') => {
+    setModalState({ isOpen: true, type, title, message });
+  };
+
+  const closeModal = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // Buenos Aires default coordinates (Palermo/Belgrano area)
   const defaultLat = -34.5889;
@@ -78,8 +99,8 @@ export const SearchWalkersPage: React.FC = () => {
         setSelectedWalker(null);
         setBookingSuccess(null);
       }, 2000);
-    } catch (err) {
-      alert('Error al procesar la reserva.');
+    } catch {
+      showModal('No se pudo procesar la reserva', 'Ocurrió un problema al enviar la solicitud. Por favor intentalo de nuevo.', 'error');
     } finally {
       setIsBooking(false);
     }
@@ -87,13 +108,21 @@ export const SearchWalkersPage: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8 max-w-5xl mx-auto space-y-6 animate-fade-in font-body">
+      <NotificationModal
+        isOpen={modalState.isOpen}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+        onClose={closeModal}
+      />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#005da7] flex items-center gap-3">
           <Search className="w-8 h-8 text-[#005da7]" /> Buscar Paseadores Cercanos
         </h1>
         <p className="text-sm text-[#414751] mt-1 font-body">
-          Resultados por proximidad en tiempo real · {filtered.length} paseadores encontrados en tu zona
+          Paseadores disponibles en tu zona · {filtered.length} paseadores encontrados
         </p>
       </div>
 
@@ -101,7 +130,7 @@ export const SearchWalkersPage: React.FC = () => {
       <div className="card-connection p-6 bg-white shadow-level1 border-[#dde4e6]">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-4 h-4 text-[#005da7]" />
-          <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider">Filtros por Proximidad (PostGIS)</p>
+          <p className="text-xs font-headline font-bold text-[#005da7] uppercase tracking-wider">Filtros de Búsqueda</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div>
@@ -128,7 +157,7 @@ export const SearchWalkersPage: React.FC = () => {
           </div>
           <div>
             <label className="block text-xs font-headline font-bold text-[#161d1f] mb-1.5">
-              Rating mínimo: <span className="text-[#005da7] font-extrabold">{minRating > 0 ? `${minRating}★` : 'Todos'}</span>
+              Calificación mínima: <span className="text-[#005da7] font-extrabold">{minRating > 0 ? `${minRating}★` : 'Todas'}</span>
             </label>
             <input
               type="range" min={0} max={5} step={0.5}
@@ -144,7 +173,7 @@ export const SearchWalkersPage: React.FC = () => {
       {isLoading ? (
         <div className="card-connection p-12 text-center bg-white border-[#dde4e6]">
           <Loader2 className="w-8 h-8 text-[#005da7] animate-spin mx-auto mb-3" />
-          <p className="font-headline font-bold text-base text-[#161d1f]">Consultando paseadores mediante API de proximidad...</p>
+          <p className="font-headline font-bold text-base text-[#161d1f]">Buscando paseadores en tu zona...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -169,7 +198,7 @@ export const SearchWalkersPage: React.FC = () => {
                     <div>
                       <p className="font-headline font-bold text-[#161d1f] text-base">{walker.full_name}</p>
                       <p className="text-xs text-[#414751] flex items-center gap-1 mt-0.5 font-body">
-                        <MapPin className="w-3.5 h-3.5 text-[#005da7]" /> {walker.distance_km.toFixed(1)} km de ti
+                        <MapPin className="w-3.5 h-3.5 text-[#005da7]" /> {walker.distance_km.toFixed(1)} km de distancia
                       </p>
                     </div>
                   </div>

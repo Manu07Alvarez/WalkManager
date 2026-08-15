@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Edit3, Save, MapPin, Star, Clock, Calendar, CheckCircle2, Loader2 } from 'lucide-react';
 import { AuthUser } from '../../auth/api/authApi';
 import { updateMyWalkerProfile } from '../api/walkerProfileApi';
+import { NotificationModal, NotificationType } from '../../../shared/components/NotificationModal';
 
 interface Schedule {
   day: string;
@@ -22,6 +23,26 @@ export const ProfilePage: React.FC = () => {
       return null;
     }
   });
+
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: NotificationType;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+
+  const showModal = (title: string, message: string, type: NotificationType = 'info') => {
+    setModalState({ isOpen: true, type, title, message });
+  };
+
+  const closeModal = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
 
   const [profile, setProfile] = useState({
     name: user?.full_name || 'Usuario WalkManager',
@@ -89,9 +110,9 @@ export const ProfilePage: React.FC = () => {
       }
 
       setEditing(false);
-      alert('¡Perfil actualizado con éxito en el backend!');
+      showModal('¡Perfil actualizado!', 'Tus cambios han sido guardados exitosamente.', 'success');
     } catch {
-      alert('Error al guardar los cambios de perfil.');
+      showModal('Error al guardar', 'No se pudieron guardar los cambios en tu perfil. Intentalo de nuevo.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -117,6 +138,14 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 animate-fade-in font-body">
+      <NotificationModal
+        isOpen={modalState.isOpen}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+        onClose={closeModal}
+      />
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#005da7] flex items-center gap-3">

@@ -255,7 +255,7 @@ export const AuthPage: React.FC = () => {
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Conectando API...
+                        <Loader2 className="w-4 h-4 animate-spin" /> Conectando...
                       </>
                     ) : (
                       <>
@@ -319,7 +319,7 @@ export const AuthPage: React.FC = () => {
 
                       {errors.length > 0 && (
                         <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
-                          <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
+                          <p className="text-xs font-bold text-[#93000a] font-headline">Revisá los siguientes campos:</p>
                           {errors.map((err, i) => (
                             <p key={i} className="text-xs text-[#93000a]">• {err}</p>
                           ))}

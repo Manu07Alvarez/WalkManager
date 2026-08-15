@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Dog, Check, X, CheckCircle2, Clock3, XCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { fetchUserBookings, acceptBooking, rejectBooking, cancelBooking } from '../api/bookingApi';
+import { NotificationModal, NotificationType } from '../../../shared/components/NotificationModal';
 
 type BookingStatus = 'Pending' | 'Accepted' | 'Rejected' | 'Expired' | 'Cancelled';
 
@@ -48,6 +49,27 @@ export const BookingsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
+  // Modal State
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: NotificationType;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+
+  const showModal = (title: string, message: string, type: NotificationType = 'info') => {
+    setModalState({ isOpen: true, type, title, message });
+  };
+
+  const closeModal = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
+
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -85,8 +107,9 @@ export const BookingsPage: React.FC = () => {
     try {
       await acceptBooking(id);
       setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: 'Accepted' } : b)));
+      showModal('Reserva aceptada', 'Has aceptado la solicitud de paseo correctamente.', 'success');
     } catch {
-      alert('Error al aceptar la reserva.');
+      showModal('No se pudo aceptar', 'Ocurrió un problema al procesar la solicitud. Intentalo de nuevo.', 'error');
     } finally {
       setActionInProgress(null);
     }
@@ -97,8 +120,9 @@ export const BookingsPage: React.FC = () => {
     try {
       await rejectBooking(id);
       setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: 'Rejected' } : b)));
+      showModal('Reserva rechazada', 'Has rechazado la solicitud de paseo.', 'info');
     } catch {
-      alert('Error al rechazar la reserva.');
+      showModal('No se pudo rechazar', 'Ocurrió un problema al rechazar la solicitud. Intentalo de nuevo.', 'error');
     } finally {
       setActionInProgress(null);
     }
@@ -109,8 +133,9 @@ export const BookingsPage: React.FC = () => {
     try {
       await cancelBooking(id);
       setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: 'Cancelled' } : b)));
+      showModal('Reserva cancelada', 'La reserva ha sido cancelada exitosamente.', 'info');
     } catch {
-      alert('Error al cancelar la reserva.');
+      showModal('No se pudo cancelar', 'Ocurrió un problema al cancelar la reserva.', 'error');
     } finally {
       setActionInProgress(null);
     }
@@ -125,12 +150,20 @@ export const BookingsPage: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 animate-fade-in font-body">
+      <NotificationModal
+        isOpen={modalState.isOpen}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+        onClose={closeModal}
+      />
+
       <div>
         <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#005da7] flex items-center gap-3">
           <Calendar className="w-8 h-8 text-[#005da7]" /> Mis Reservas
         </h1>
         <p className="text-sm text-[#414751] mt-1 font-body">
-          Gestión transparente del ciclo de vida de reservas · {bookings.length} reservas registradas
+          Gestión de tus solicitudes de paseo · {bookings.length} reservas registradas
         </p>
       </div>
 
@@ -155,14 +188,14 @@ export const BookingsPage: React.FC = () => {
       {isLoading ? (
         <div className="card-connection p-12 text-center bg-white border-[#dde4e6]">
           <Loader2 className="w-8 h-8 text-[#005da7] animate-spin mx-auto mb-3" />
-          <p className="font-headline font-bold text-base text-[#161d1f]">Cargando reservas desde el servidor API...</p>
+          <p className="font-headline font-bold text-base text-[#161d1f]">Cargando tus reservas...</p>
         </div>
       ) : (
         <div className="space-y-4">
           {filtered.length === 0 ? (
             <div className="card-connection p-12 text-center bg-white border-[#dde4e6]">
               <Dog className="w-12 h-12 text-[#414751] mx-auto mb-3 opacity-40" />
-              <p className="font-headline font-bold text-lg text-[#161d1f]">No hay reservas en esta categoría.</p>
+              <p className="font-headline font-bold text-lg text-[#161d1f]">No tenés reservas en esta categoría.</p>
             </div>
           ) : (
             filtered.map((booking) => {

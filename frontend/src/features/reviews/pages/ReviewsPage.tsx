@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Plus, Clock3, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { fetchReviews, submitReview } from '../api/reviewApi';
+import { NotificationModal, NotificationType } from '../../../shared/components/NotificationModal';
 
 interface Review {
   id: string;
@@ -52,6 +53,26 @@ export const ReviewsPage: React.FC = () => {
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: NotificationType;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+
+  const showModal = (title: string, message: string, type: NotificationType = 'info') => {
+    setModalState({ isOpen: true, type, title, message });
+  };
+
+  const closeModal = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
+
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -84,7 +105,7 @@ export const ReviewsPage: React.FC = () => {
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newReview.comment.trim() || newReview.comment.trim().length < 10) {
-      alert('El comentario debe tener al menos 10 caracteres.');
+      showModal('Comentario muy corto', 'El comentario debe tener al menos 10 caracteres para enviar la reseña.', 'error');
       return;
     }
 
@@ -110,8 +131,9 @@ export const ReviewsPage: React.FC = () => {
       setReviews((prev) => [added, ...prev]);
       setShowForm(false);
       setNewReview({ rating: 5, comment: '' });
+      showModal('¡Reseña enviada!', 'Tu opinión fue registrada exitosamente y se encuentra visible.', 'success');
     } catch {
-      alert('Error al enviar la reseña.');
+      showModal('No se pudo enviar', 'Ocurrió un problema al guardar la reseña. Por favor intentalo nuevamente.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -123,12 +145,20 @@ export const ReviewsPage: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 animate-fade-in font-body">
+      <NotificationModal
+        isOpen={modalState.isOpen}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+        onClose={closeModal}
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#005da7] flex items-center gap-3">
             <Star className="w-8 h-8 text-[#005da7] fill-current" /> Reseñas
           </h1>
-          <p className="text-sm text-[#414751] mt-1 font-body">Exclusivas de paseos completados con resultado Exitoso o Fallido (FR-049)</p>
+          <p className="text-sm text-[#414751] mt-1 font-body">Calificaciones y experiencias de paseos completados</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -198,7 +228,7 @@ export const ReviewsPage: React.FC = () => {
       {isLoading ? (
         <div className="card-connection p-12 text-center bg-white border-[#dde4e6]">
           <Loader2 className="w-8 h-8 text-[#005da7] animate-spin mx-auto mb-3" />
-          <p className="font-headline font-bold text-base text-[#161d1f]">Cargando reseñas desde el servidor API...</p>
+          <p className="font-headline font-bold text-base text-[#161d1f]">Cargando reseñas...</p>
         </div>
       ) : (
         <div className="space-y-4">
