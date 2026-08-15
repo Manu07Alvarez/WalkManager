@@ -77,7 +77,7 @@ export const AuthPage: React.FC = () => {
         </div>
 
         {/* Card */}
-        <div className="card-connection p-8 bg-white shadow-level2 border-[#dde4e6]">
+        <motion.div layout className="card-connection p-8 bg-white shadow-level2 border-[#dde4e6]">
           {/* Tabs with layout morph pill */}
           <div className="relative flex gap-1.5 p-1.5 rounded-2xl bg-[#eef5f7] mb-8">
             {tabs.map((t) => {
@@ -106,81 +106,90 @@ export const AuthPage: React.FC = () => {
             })}
           </div>
 
-          {/* Form with smooth animated transitions */}
-          <form onSubmit={handleSubmit}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={tab}
-                initial={{ opacity: 0, y: 10, scale: 0.99 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.99 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="space-y-4"
-              >
-                {(tab === 'register' || tab === 'walker') && (
-                  <>
-                    <div>
-                      <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Nombre completo</label>
-                      <input
-                        name="full_name"
-                        value={formData.full_name}
-                        onChange={handleChange}
-                        className="input-field"
-                        placeholder="Juan García"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">CUIL</label>
-                      <input
-                        name="cuil"
-                        value={formData.cuil}
-                        onChange={handleChange}
-                        className="input-field"
-                        placeholder="20-12345678-9"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Teléfono</label>
-                      <input
-                        name="phone_number"
-                        value={formData.phone_number}
-                        onChange={handleChange}
-                        className="input-field"
-                        placeholder="+54 11 1234-5678"
-                      />
-                    </div>
-                  </>
-                )}
+          {/* Form with smooth accordion-style field expansion & contraction */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <AnimatePresence initial={false}>
+              {(tab === 'register' || tab === 'walker') && (
+                <motion.div
+                  key="registration-top-fields"
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-4 overflow-hidden"
+                >
+                  <div>
+                    <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Nombre completo</label>
+                    <input
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleChange}
+                      className="input-field"
+                      placeholder="Juan García"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">CUIL</label>
+                    <input
+                      name="cuil"
+                      value={formData.cuil}
+                      onChange={handleChange}
+                      className="input-field"
+                      placeholder="20-12345678-9"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Teléfono</label>
+                    <input
+                      name="phone_number"
+                      value={formData.phone_number}
+                      onChange={handleChange}
+                      className="input-field"
+                      placeholder="+54 11 1234-5678"
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-                <div>
-                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Email</label>
-                  <input
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="input-field"
-                    placeholder="tu@email.com"
-                    required
-                  />
-                </div>
+            <div>
+              <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="input-field"
+                placeholder="tu@email.com"
+                required
+              />
+            </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Contraseña</label>
-                  <input
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="input-field"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
+            <div>
+              <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Contraseña</label>
+              <input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="input-field"
+                placeholder="••••••••"
+                required
+              />
+            </div>
 
-                {(tab === 'register' || tab === 'walker') && (
+            <AnimatePresence initial={false}>
+              {(tab === 'register' || tab === 'walker') && (
+                <motion.div
+                  key="confirm-password-field"
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
                   <div>
                     <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Confirmar contraseña</label>
                     <input
@@ -193,30 +202,35 @@ export const AuthPage: React.FC = () => {
                       required
                     />
                   </div>
-                )}
-
-                {/* Errors */}
-                {errors.length > 0 && (
-                  <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
-                    <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
-                    {errors.map((err, i) => (
-                      <p key={i} className="text-xs text-[#93000a]">• {err}</p>
-                    ))}
-                  </div>
-                )}
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  className="btn-brand w-full py-3.5 mt-2"
-                >
-                  {tab === 'login' ? '¡Ingresar a la plataforma!' : '¡Crear mi cuenta!'}
-                </motion.button>
-              </motion.div>
+                </motion.div>
+              )}
             </AnimatePresence>
+
+            {/* Errors */}
+            {errors.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1"
+              >
+                <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
+                {errors.map((err, i) => (
+                  <p key={i} className="text-xs text-[#93000a]">• {err}</p>
+                ))}
+              </motion.div>
+            )}
+
+            <motion.button
+              layout
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="btn-brand w-full py-3.5 mt-2"
+            >
+              {tab === 'login' ? '¡Ingresar a la plataforma!' : '¡Crear mi cuenta!'}
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
