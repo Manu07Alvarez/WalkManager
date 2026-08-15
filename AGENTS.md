@@ -5,5 +5,6 @@ specs/001-dog-walking-platform/plan.md
 <!-- SPECKIT END -->
 
 ## User Preferences & PR Guidelines
-- **ALWAYS CREATE A NEW PR**: Do NOT update or push to existing Pull Requests unless explicitly instructed by the user. Always create a new isolated branch (e.g. `feature/`, `fix/`, `docs/`) and open a new Pull Request for subsequent tasks.
-- **ALWAYS USE /speckit-git-commit**: Always use the `/speckit-git-commit` skill workflow for staging, auditing TODO-TREE tags, committing changes, and opening Pull Requests.
+- **COMMIT ON ACTIVE FEATURE BRANCH UNTIL RESOLVED**: If work on a feature/issue is still in progress or has follow-up actions within the same topic, commit directly to the current feature branch. Do NOT create or open a Pull Request (PR) until the feature/issue is completely finished and resolved, preventing fragmented/minimal PRs for the same topic.
+- **PR ONLY WHEN COMPLETE**: Create and open a Pull Request ONLY when the topic/issue is fully resolved. If uncertain whether the topic is complete, ask the user for confirmation before creating the PR.
+- **ALWAYS USE /speckit-git-commit**: Always use the `/speckit-git-commit` skill workflow for staging, auditing TODO-TREE tags, and committing changes.
