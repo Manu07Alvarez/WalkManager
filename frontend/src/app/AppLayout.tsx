@@ -29,7 +29,7 @@ export const AppLayout: React.FC = () => {
           className="flex items-center gap-3 px-6 py-5 border-b border-[#dde4e6] cursor-pointer hover:opacity-90 transition-opacity"
           onClick={() => navigate('/')}
         >
-          <img src="/icon.svg" alt="WalkManager Logo" className="w-9 h-9 object-contain drop-shadow-sm" />
+          <img src="/icon.svg" alt="WalkManager Logo" className="w-11 h-11 scale-110 object-contain drop-shadow-sm transition-transform hover:scale-125" />
           <div>
             <span className="text-base font-headline font-bold text-[#005da7]">WalkManager</span>
             <p className="text-[10px] text-[#414751] font-body -mt-0.5">Plataforma de Paseadores</p>
@@ -72,7 +72,7 @@ export const AppLayout: React.FC = () => {
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white/95 backdrop-blur border-b border-[#dde4e6] shadow-sm">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <img src="/icon.svg" alt="WalkManager Logo" className="w-7 h-7 object-contain" />
+          <img src="/icon.svg" alt="WalkManager Logo" className="w-9 h-9 scale-110 object-contain" />
           <span className="text-sm font-bold font-headline text-[#005da7]">WalkManager</span>
         </div>
         <div className="flex items-center gap-1">

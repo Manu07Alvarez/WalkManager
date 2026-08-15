@@ -58,7 +58,7 @@ export const LandingPage: React.FC = () => {
       {/* Navbar */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#dde4e6] bg-white/80 backdrop-blur-md">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <img src="/icon.svg" alt="WalkManager Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
+          <img src="/icon.svg" alt="WalkManager Logo" className="w-12 h-12 scale-110 object-contain drop-shadow-sm transition-transform hover:scale-125" />
           <div>
             <span className="text-xl font-headline font-bold text-[#005da7]">WalkManager</span>
             <p className="text-[11px] text-[#414751] font-body -mt-0.5 hidden md:block">The Reliable Best Friend</p>
@@ -187,8 +187,8 @@ export const LandingPage: React.FC = () => {
           viewport={{ once: true }}
           className="max-w-2xl mx-auto card-connection p-10 text-center bg-gradient-to-b from-white to-[#eef5f7] border-[#005da7]/20"
         >
-          <div className="w-16 h-16 rounded-2xl bg-[#005da7]/10 border border-[#005da7]/20 flex items-center justify-center mx-auto mb-5 shadow-sm">
-            <img src="/icon.svg" alt="WalkManager Logo" className="w-10 h-10 object-contain" />
+          <div className="w-20 h-20 rounded-2xl bg-[#005da7]/10 border border-[#005da7]/20 flex items-center justify-center mx-auto mb-5 shadow-sm">
+            <img src="/icon.svg" alt="WalkManager Logo" className="w-14 h-14 scale-110 object-contain" />
           </div>
           <h2 className="text-3xl font-headline font-bold text-[#161d1f] mb-3">
             ¡En marcha!
@@ -210,7 +210,7 @@ export const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer className="relative z-10 border-t border-[#dde4e6] bg-white px-6 py-6 text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <img src="/icon.svg" alt="WalkManager Logo" className="w-5 h-5 object-contain" />
+          <img src="/icon.svg" alt="WalkManager Logo" className="w-7 h-7 scale-110 object-contain" />
           <span className="text-xs font-bold font-headline text-[#005da7]">WalkManager</span>
         </div>
         <p className="text-xs text-[#414751]">

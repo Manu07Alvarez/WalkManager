@@ -70,7 +70,7 @@ export const AuthPage: React.FC = () => {
             <ArrowLeft className="w-4 h-4" /> Volver al inicio
           </button>
           <div className="flex items-center justify-center gap-3 mb-3">
-            <img src="/icon.svg" alt="WalkManager Logo" className="w-14 h-14 object-contain drop-shadow-sm" />
+            <img src="/icon.svg" alt="WalkManager Logo" className="w-20 h-20 scale-110 object-contain drop-shadow-sm transition-transform hover:scale-115" />
           </div>
           <h1 className="text-3xl font-headline font-bold text-[#005da7]">WalkManager</h1>
           <p className="text-sm text-[#414751] mt-1 font-body">Tu plataforma de paseos profesionales</p>
