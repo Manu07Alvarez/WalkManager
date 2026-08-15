@@ -1,0 +1,90 @@
+name: walkmanager
+
+services:
+  # =========================================================================
+  # PostgreSQL + PostGIS (Relational Data & Geospatial Proximity Search)
+  # =========================================================================
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: walkmanager-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-walkmanager}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-walkmanager}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - walkmanager-network
+
+  # =========================================================================
+  # DragonflyDB (High-Performance Redis-compatible In-Memory Cache & Rate Limiter)
+  # =========================================================================
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    container_name: walkmanager-dragonfly
+    restart: unless-stopped
+    ulimits:
+      memlock: -1
+    command:
+      - "dragonfly"
+      - "--logtostderr"
+      - "--dir=/data"
+      - "--cache_mode=true"
+    ports:
+      - "${DRAGONFLY_PORT:-6379}:6379"
+    volumes:
+      - dragonfly_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - walkmanager-network
+
+  # =========================================================================
+  # SeaweedFS (Distributed Object Storage: Master, Filer & S3 API)
+  # =========================================================================
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: walkmanager-seaweedfs
+    restart: unless-stopped
+    command: "server -dir=/data -master.port=9333 -volume.port=8080 -filer=true -filer.port=8888 -s3=true -s3.port=8333"
+    ports:
+      - "${SEAWEEDFS_MASTER_PORT:-9333}:9333"  # Master HTTP
+      - "${SEAWEEDFS_FILER_PORT:-8888}:8888"   # Filer HTTP
+      - "${SEAWEEDFS_S3_PORT:-8333}:8333"       # S3 Compatible API
+      - "${SEAWEEDFS_VOLUME_PORT:-8080}:8080"   # Volume Server HTTP
+    volumes:
+      - seaweedfs_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:9333/cluster/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - walkmanager-network
+
+volumes:
+  postgres_data:
+    name: walkmanager_postgres_data
+  dragonfly_data:
+    name: walkmanager_dragonfly_data
+  seaweedfs_data:
+    name: walkmanager_seaweedfs_data
+
+networks:
+  walkmanager-network:
+    name: walkmanager_network
+    driver: bridge
