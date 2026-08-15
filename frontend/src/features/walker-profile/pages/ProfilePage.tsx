@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Edit3, Save, MapPin, Star, Clock, Calendar, CheckCircle2, Loader2 } from 'lucide-react';
 import { AuthUser } from '../../auth/api/authApi';
-import { updateMyWalkerProfile } from '../api/walkerProfileApi';
+import { updateMyWalkerProfile, fetchMyWalkerProfile } from '../api/walkerProfileApi';
 import { NotificationModal, NotificationType } from '../../../shared/components/NotificationModal';
 
 interface Schedule {
@@ -44,43 +44,72 @@ export const ProfilePage: React.FC = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }));
   };
 
-  const [profile, setProfile] = useState({
-    name: user?.full_name || 'Usuario WalkManager',
-    email: user?.email || 'usuario@walkmanager.dev',
-    role: user?.role || 'Customer',
-    zone: 'Palermo, CABA',
-    description:
-      user?.role === 'DogWalker'
-        ? 'Paseador profesional verificado en WalkManager. Amante de las mascotas con años de experiencia.'
-        : 'Usuario cliente en WalkManager. Amante de los perros y paseo responsable.',
-    maxDogs: 3,
-    pricePerService: 2500,
-    dogTypes: 'Grandes, medianos, pequeños',
-    availableDays: ['Lunes', 'Miércoles', 'Viernes', 'Sábado'],
+  const [profile, setProfile] = useState(() => {
+    const cached = localStorage.getItem('user_profile_data');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {}
+    }
+    return {
+      name: user?.full_name || 'Usuario WalkManager',
+      email: user?.email || 'usuario@walkmanager.dev',
+      role: user?.role || 'Customer',
+      zone: 'Palermo, CABA',
+      description:
+        user?.role === 'DogWalker'
+          ? 'Paseador profesional verificado en WalkManager. Amante de las mascotas con años de experiencia.'
+          : 'Usuario cliente en WalkManager. Amante de los perros y paseo responsable.',
+      maxDogs: 3,
+      pricePerService: 2500,
+      dogTypes: 'Grandes, medianos, pequeños',
+      availableDays: ['Lunes', 'Miércoles', 'Viernes', 'Sábado'],
+    };
   });
 
   useEffect(() => {
-    const stored = localStorage.getItem('user_info');
-    if (stored) {
-      try {
-        const u: AuthUser = JSON.parse(stored);
-        setUser(u);
-        setProfile((prev) => ({
-          ...prev,
-          name: u.full_name,
-          email: u.email,
-          role: u.role,
-        }));
-      } catch {}
-    }
+    let isMounted = true;
+
+    fetchMyWalkerProfile()
+      .then((data) => {
+        if (isMounted && data) {
+          setProfile((prev: any) => {
+            const next = {
+              ...prev,
+              name: data.name || prev.name,
+              zone: data.zone || prev.zone,
+              description: data.description || prev.description,
+              maxDogs: data.maxDogs ?? prev.maxDogs,
+              pricePerService: data.pricePerService ?? prev.pricePerService,
+              dogTypes: data.dogTypes || prev.dogTypes,
+              availableDays: data.availableDays || prev.availableDays,
+            };
+            localStorage.setItem('user_profile_data', JSON.stringify(next));
+            return next;
+          });
+        }
+      })
+      .catch(() => {
+        const stored = localStorage.getItem('user_info');
+        if (stored) {
+          try {
+            const u: AuthUser = JSON.parse(stored);
+            setUser(u);
+          } catch {}
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const toggleDay = (day: string) => {
     if (!editing) return;
-    setProfile((prev) => {
+    setProfile((prev: any) => {
       const exists = prev.availableDays.includes(day);
       const nextDays = exists
-        ? prev.availableDays.filter((d) => d !== day)
+        ? prev.availableDays.filter((d: string) => d !== day)
         : [...prev.availableDays, day];
       return { ...prev, availableDays: nextDays };
     });
@@ -99,10 +128,24 @@ export const ProfilePage: React.FC = () => {
         availableDays: profile.availableDays,
       });
 
+      const fullUpdated = {
+        ...profile,
+        name: updated.name || profile.name,
+        zone: updated.zone || profile.zone,
+        description: updated.description || profile.description,
+        maxDogs: updated.maxDogs ?? profile.maxDogs,
+        pricePerService: updated.pricePerService ?? profile.pricePerService,
+        dogTypes: updated.dogTypes || profile.dogTypes,
+        availableDays: updated.availableDays || profile.availableDays,
+      };
+
+      setProfile(fullUpdated);
+      localStorage.setItem('user_profile_data', JSON.stringify(fullUpdated));
+
       if (user) {
         const updatedUser: AuthUser = {
           ...user,
-          full_name: updated.name || profile.name,
+          full_name: fullUpdated.name,
         };
         setUser(updatedUser);
         localStorage.setItem('user_info', JSON.stringify(updatedUser));
@@ -118,7 +161,7 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  const schedules: Schedule[] = profile.availableDays.map((day) => ({
+  const schedules: Schedule[] = profile.availableDays.map((day: string) => ({
     day,
     from: '08:00',
     to: '14:00',
