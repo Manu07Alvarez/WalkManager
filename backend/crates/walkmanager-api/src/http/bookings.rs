@@ -27,6 +27,53 @@ pub struct BookingActionResponse {
     pub status: String,
 }
 
+#[derive(Debug, Serialize, Clone)]
+pub struct BookingItemResponse {
+    pub id: String,
+    pub walker_name: String,
+    pub customer_name: String,
+    pub date: String,
+    pub time_slot: String,
+    pub dog_count: u32,
+    pub status: String,
+    pub total_price: f64,
+}
+
+pub async fn list_bookings_handler() -> Json<Vec<BookingItemResponse>> {
+    Json(vec![
+        BookingItemResponse {
+            id: "b101-0000-0000-0000".to_string(),
+            walker_name: "Santiago Martínez".to_string(),
+            customer_name: "Carlos Pérez".to_string(),
+            date: "16 de Agosto, 2026".to_string(),
+            time_slot: "10:00 - 11:00 hs".to_string(),
+            dog_count: 2,
+            status: "Accepted".to_string(),
+            total_price: 3500.0,
+        },
+        BookingItemResponse {
+            id: "b102-0000-0000-0000".to_string(),
+            walker_name: "Valeria Rossi".to_string(),
+            customer_name: "Carlos Pérez".to_string(),
+            date: "17 de Agosto, 2026".to_string(),
+            time_slot: "15:00 - 16:00 hs".to_string(),
+            dog_count: 1,
+            status: "Pending".to_string(),
+            total_price: 2800.0,
+        },
+        BookingItemResponse {
+            id: "b103-0000-0000-0000".to_string(),
+            walker_name: "Lucas Fernández".to_string(),
+            customer_name: "Carlos Pérez".to_string(),
+            date: "10 de Agosto, 2026".to_string(),
+            time_slot: "11:00 - 12:00 hs".to_string(),
+            dog_count: 1,
+            status: "Completed".to_string(),
+            total_price: 2200.0,
+        },
+    ])
+}
+
 pub async fn create_booking_handler(
     Json(_payload): Json<CreateBookingRequest>,
 ) -> (StatusCode, Json<CreateBookingResponse>) {

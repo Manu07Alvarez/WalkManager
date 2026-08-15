@@ -1,12 +1,13 @@
-use axum::{routing::get, Json, Router};
+use axum::{routing::{get, post}, Json, Router};
 use serde_json::{json, Value};
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use walkmanager_api::http::{
-    accept_booking_handler, auth_routes, cancel_booking_handler, create_booking_handler,
-    reject_booking_handler, search_walkers_handler,
+    accept_booking_handler, apply_restriction_handler, auth_routes, cancel_booking_handler,
+    create_booking_handler, list_bookings_handler, list_incidents_handler, list_reviews_handler,
+    reject_booking_handler, search_walkers_handler, submit_review_handler, walker_profiles_routes,
 };
 
 async fn health_handler() -> Json<Value> {
@@ -35,11 +36,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let api_v1 = Router::new()
         .merge(auth_routes())
+        .merge(walker_profiles_routes())
         .route("/walkers/search", get(search_walkers_handler))
-        .route("/bookings", axum::routing::post(create_booking_handler))
-        .route("/bookings/:id/accept", axum::routing::post(accept_booking_handler))
-        .route("/bookings/:id/reject", axum::routing::post(reject_booking_handler))
-        .route("/bookings/:id/cancel", axum::routing::post(cancel_booking_handler));
+        .route("/bookings", get(list_bookings_handler).post(create_booking_handler))
+        .route("/bookings/:id/accept", post(accept_booking_handler))
+        .route("/bookings/:id/reject", post(reject_booking_handler))
+        .route("/bookings/:id/cancel", post(cancel_booking_handler))
+        .route("/reviews", get(list_reviews_handler).post(submit_review_handler))
+        .route("/moderation/incidents", get(list_incidents_handler))
+        .route("/moderation/restrictions", post(apply_restriction_handler));
 
     let app = Router::new()
         .route("/health", get(health_handler))
