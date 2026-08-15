@@ -305,6 +305,26 @@
 
 ---
 
+## Phase 11: Database Migrations & Seeding Strategy (FR-065)
+
+**Goal**: Provide complete SeaORM database migrations and an executable Rust seeder binary (`walkmanager-seed`) capable of populating at least 100 realistic records across PostgreSQL/PostGIS, uploading media to SeaweedFS, and warming DragonflyDB cache keys.
+
+### Tests for Database Migrations & Seeding
+
+- [ ] T166 [P] Add Rust integration tests for `walkmanager-seed` binary verifying $\ge 100$ records populated across PostgreSQL/PostGIS, SeaweedFS, and DragonflyDB in `backend/crates/walkmanager-infrastructure/tests/seeder_verification.rs`
+
+### Implementation for Database Migrations & Seeding
+
+- [ ] T167 [P] Implement complete SeaORM migration scripts for PostgreSQL/PostGIS schema in `backend/crates/walkmanager-infrastructure/migration/src/`
+- [ ] T168 Implement `walkmanager-seed` binary CLI entrypoint (`cargo run --bin walkmanager-seed`) in `backend/crates/walkmanager-api/src/bin/seed.rs`
+- [ ] T169 Implement seeder generators for fake user accounts, walker profiles, availability schedules, bookings, reviews, incidents, SeaweedFS avatar uploads, and DragonflyDB cache warming in `backend/crates/walkmanager-infrastructure/src/seeding/`
+- [ ] T170 Execute `cargo run --bin walkmanager-seed` and verify PostgreSQL/PostGIS, SeaweedFS, and DragonflyDB contain $\ge 100$ populated test records
+
+**Checkpoint**: Complete SeaORM migrations and 100+ record database seeder binary fully verified.
+
+
+---
+
 ## Dependencies & Execution Order
 
 - **US2 Publish Walker Services (P1)**: Depends on US1 authentication and walker identity.
