@@ -84,16 +84,28 @@ export const AuthPage: React.FC = () => {
         const res = await loginUser({ email: formData.email, password: formData.password });
         setSuccessMessage('¡Inicio de sesión exitoso! Redirigiendo a la plataforma...');
         localStorage.setItem('auth_token', res.access_token);
+        if (res.user) {
+          localStorage.setItem('user_info', JSON.stringify(res.user));
+          window.dispatchEvent(new Event('auth-changed'));
+        }
         setTimeout(() => navigate('/search'), 1000);
       } else if (tab === 'register') {
         const res = await registerCustomer(formData);
         setSuccessMessage('¡Cuenta de cliente creada exitosamente! Conectando...');
         localStorage.setItem('auth_token', res.access_token);
+        if (res.user) {
+          localStorage.setItem('user_info', JSON.stringify(res.user));
+          window.dispatchEvent(new Event('auth-changed'));
+        }
         setTimeout(() => navigate('/search'), 1000);
       } else {
         const res = await registerWalker(formData);
         setSuccessMessage('¡Registro de paseador exitoso! Bienvenido a la red.');
         localStorage.setItem('auth_token', res.access_token);
+        if (res.user) {
+          localStorage.setItem('user_info', JSON.stringify(res.user));
+          window.dispatchEvent(new Event('auth-changed'));
+        }
         setTimeout(() => navigate('/search'), 1000);
       }
     } catch (err: any) {

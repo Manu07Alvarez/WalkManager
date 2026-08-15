@@ -1,24 +1,84 @@
-import React from 'react';
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'motion/react';
-import { Search, Calendar, User, Star, Shield } from 'lucide-react';
-import { AnimatedPage } from './AnimatedPage';
+use React, { useEffect, useState } from 'react';
+use { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+use { AnimatePresence } from 'motion/react';
+use { Search, Calendar, User, Star, Shield, LogOut } from 'lucide-react';
+use { AnimatedPage } from './AnimatedPage';
+use { AuthUser } from '../features/auth/api/authApi';
 
-// TODO: Add notification bell with unread badge count from notifications API
-// TODO: Add user avatar dropdown with role switcher for demo mode
-// REVIEW: Confirm responsive sidebar collapse at 768px breakpoint
+interface NavItem {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  roles?: Array<'Customer' | 'DogWalker' | 'Moderator'>;
+}
 
-const navItems = [
-  { to: '/search',     icon: Search,   label: 'Buscar Paseadores' },
-  { to: '/bookings',   icon: Calendar, label: 'Mis Reservas' },
-  { to: '/profile',    icon: User,     label: 'Mi Perfil' },
-  { to: '/reviews',    icon: Star,     label: 'Reseñas' },
-  { to: '/moderation', icon: Shield,   label: 'Moderación' },
+const allNavItems: NavItem[] = [
+  { to: '/search',     icon: Search,   label: 'Buscar Paseadores', roles: ['Customer'] },
+  { to: '/bookings',   icon: Calendar, label: 'Mis Reservas',       roles: ['Customer', 'DogWalker'] },
+  { to: '/profile',    icon: User,     label: 'Mi Perfil',          roles: ['Customer', 'DogWalker', 'Moderator'] },
+  { to: '/reviews',    icon: Star,     label: 'Reseñas',            roles: ['Customer', 'DogWalker', 'Moderator'] },
+  { to: '/moderation', icon: Shield,   label: 'Moderación',        roles: ['Moderator'] },
 ];
 
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem('user_info');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      try {
+        const stored = localStorage.getItem('user_info');
+        setCurrentUser(stored ? JSON.parse(stored) : null);
+      } catch {
+        setCurrentUser(null);
+      }
+    };
+
+    window.addEventListener('auth-changed', handleAuthChange);
+    window.addEventListener('storage', handleAuthChange);
+    return () => {
+      window.removeEventListener('auth-changed', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_info');
+    setCurrentUser(null);
+    window.dispatchEvent(new Event('auth-changed'));
+    navigate('/auth?tab=login');
+  };
+
+  const userRole = currentUser?.role || 'Customer';
+
+  const visibleNavItems = allNavItems.filter(
+    (item) => !item.roles || item.roles.includes(userRole)
+  );
+
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case 'DogWalker':
+        return 'Paseador Verificado';
+      case 'Moderator':
+        return 'Moderador de Plataforma';
+      case 'Customer':
+      default:
+        return 'Cliente / Dueño';
+    }
+  };
+
+  const avatarInitial = currentUser?.full_name
+    ? currentUser.full_name.charAt(0).toUpperCase()
+    : 'U';
 
   return (
     <div className="flex min-h-screen bg-[#f4fafd] text-[#161d1f]">
@@ -36,9 +96,9 @@ export const AppLayout: React.FC = () => {
           </div>
         </div>
 
-        {/* Nav links */}
+        {/* Nav links filtered by role */}
         <nav className="flex-1 px-3 py-5 space-y-1">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
@@ -55,17 +115,45 @@ export const AppLayout: React.FC = () => {
           })}
         </nav>
 
-        {/* Footer profile card */}
-        <div className="px-4 py-4 border-t border-[#dde4e6] bg-[#f4fafd]">
-          <div className="card-connection p-3 flex items-center gap-3 bg-white">
-            <div className="w-8 h-8 rounded-full bg-[#005da7] flex items-center justify-center text-xs font-bold text-white shadow-sm font-headline">
-              U
+        {/* Footer profile card with active session & logout */}
+        <div className="px-4 py-4 border-t border-[#dde4e6] bg-[#f4fafd] space-y-2">
+          {currentUser ? (
+            <div className="card-connection p-3 flex items-center justify-between bg-white">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-[#005da7] flex items-center justify-center text-xs font-bold text-white shadow-sm font-headline">
+                  {avatarInitial}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-[#161d1f] truncate font-headline">
+                    {currentUser.full_name}
+                  </p>
+                  <p className="text-[10px] text-[#414751] font-body">
+                    {getRoleBadge(currentUser.role)}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                title="Cerrar sesión"
+                className="p-1.5 rounded-lg text-[#ba1a1a] hover:bg-[#ffdad6]/50 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-[#161d1f] truncate font-headline">Usuario Demo</p>
-              <p className="text-[10px] text-[#414751] font-body">Paseador Verificado</p>
+          ) : (
+            <div
+              onClick={() => navigate('/auth?tab=login')}
+              className="card-connection p-3 flex items-center gap-3 bg-white cursor-pointer hover:bg-[#eef5f7] transition-colors"
+            >
+              <div className="w-8 h-8 rounded-full bg-[#005da7]/10 text-[#005da7] flex items-center justify-center text-xs font-bold font-headline">
+                ?
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-[#005da7] truncate font-headline">Ingresar / Registrarse</p>
+                <p className="text-[10px] text-[#414751] font-body">Iniciar sesión con tu cuenta</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </aside>
 
@@ -76,7 +164,7 @@ export const AppLayout: React.FC = () => {
           <span className="text-sm font-bold font-headline text-[#005da7]">WalkManager</span>
         </div>
         <div className="flex items-center gap-1">
-          {navItems.slice(0, 4).map((item) => {
+          {visibleNavItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
@@ -90,6 +178,15 @@ export const AppLayout: React.FC = () => {
               </NavLink>
             );
           })}
+          {currentUser && (
+            <button
+              onClick={handleLogout}
+              title="Cerrar sesión"
+              className="p-2 rounded-xl text-[#ba1a1a] hover:bg-[#ffdad6]/50 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
 
