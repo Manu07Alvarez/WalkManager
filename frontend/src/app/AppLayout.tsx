@@ -1,6 +1,8 @@
 import React from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'motion/react';
 import { Search, Calendar, User, Star, Shield, Dog } from 'lucide-react';
+import { AnimatedPage } from './AnimatedPage';
 
 // TODO: Add notification bell with unread badge count from notifications API
 // TODO: Add user avatar dropdown with role switcher for demo mode
@@ -16,6 +18,7 @@ const navItems = [
 
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="flex min-h-screen bg-[#f4fafd] text-[#161d1f]">
@@ -92,10 +95,14 @@ export const AppLayout: React.FC = () => {
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main content with smooth view transitions */}
       <main className="flex-1 md:overflow-y-auto">
         <div className="pt-14 md:pt-0 min-h-screen">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <AnimatedPage key={location.pathname}>
+              <Outlet />
+            </AnimatedPage>
+          </AnimatePresence>
         </div>
       </main>
     </div>
