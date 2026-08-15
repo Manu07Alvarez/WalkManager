@@ -37,6 +37,11 @@
 - Q: What libraries and techniques should be used for frontend animations, layout morphing, responsive UI, interactive banners, and dynamic text? -> A: The frontend shall utilize `motion` and `pretext` for animations, layout morphing, responsive UI transitions, interactive banners, and dynamic text rendering.
 - Q: What icon library must be used for frontend iconography? -> A: The frontend user interface shall use the Lucide Icons library (`lucide-react`) for all application icons.
 
+### Session 2026-08-15
+
+- Q: How should database migrations, SeaweedFS storage setup, and seeding of >= 100 mock test records for PostgreSQL, SeaweedFS, and DragonflyDB be structured and executed? -> A: Implement SeaORM migration scripts for PostgreSQL/PostGIS schema paired with a dedicated Rust seeder binary (`walkmanager-seed`) that populates >= 100 realistic records across PostgreSQL/PostGIS, uploads avatar images to SeaweedFS, and populates DragonflyDB cache keys.
+
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Register and Manage Identity (Priority: P1)
@@ -251,6 +256,8 @@ The platform tracks no-shows, late cancellations, disputed services, repeated se
 - **FR-062**: Expected domain errors, including invalid identity data, unavailable time ranges, over-capacity bookings, expired requests, unauthorized access, invalid result transitions, restricted account actions, and moderation rejection, MUST be represented explicitly to users or operators as appropriate.
 - **FR-063**: Moderators MUST be able to list moderation reports and work items, resolve reports and work items (including disputed services), apply account restrictions and temporary suspensions, and lift active restrictions or suspensions according to moderation rules.
 - **FR-064**: Moderator capabilities MUST be restricted to operative moderation functions and MUST NOT grant access to unrelated private customer or walker actions; Moderator UserAccounts MUST NOT create DogWalkerProfile or CustomerProfile records.
+- **FR-065**: The system MUST include complete SeaORM database migrations for PostgreSQL/PostGIS schema and provide an executable database seeder (`walkmanager-seed`) capable of populating at least 100 realistic records across PostgreSQL/PostGIS (user accounts, walker profiles, customer profiles, availability schedules, bookings, reviews, and incidents), uploading sample media to SeaweedFS, and warming initial DragonflyDB cache keys for automated testing and development purposes.
+
 
 ### Key Entities *(include if feature involves data)*
 
