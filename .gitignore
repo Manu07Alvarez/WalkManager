@@ -38,6 +38,10 @@ pnpm-debug.log*
 
 # Environment and secrets
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env.*
 !.env.example
 *.pfx
@@ -61,4 +65,3 @@ logs/
 tmp/
 temp/
 *.tmp
-/DESIGN.md
