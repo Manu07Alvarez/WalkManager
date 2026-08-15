@@ -64,7 +64,7 @@ services:
       - "${SEAWEEDFS_MASTER_PORT:-9333}:9333"  # Master HTTP
       - "${SEAWEEDFS_FILER_PORT:-8888}:8888"   # Filer HTTP
       - "${SEAWEEDFS_S3_PORT:-8333}:8333"       # S3 Compatible API
-      - "${SEAWEEDFS_VOLUME_PORT:-8080}:8080"   # Volume Server HTTP
+      - "${SEAWEEDFS_VOLUME_PORT:-18080}:8080"  # Volume Server HTTP (Host 18080 to avoid collision with Backend 8080)
     volumes:
       - seaweedfs_data:/data
     healthcheck:
