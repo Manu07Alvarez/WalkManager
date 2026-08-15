@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Key, UserCheck, ShieldCheck, ArrowLeft, ArrowRight } from 'lucide-react';
-import { registerWalkerSchema, RegisterWalkerInput } from '../api/authApi';
-
-// TODO: Connect to real auth API - currently uses mock validation only
-// REVIEW: Add CUIL format mask input (XX-XXXXXXXX-X)
+import { Key, UserCheck, ShieldCheck, ArrowLeft, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { registerWalkerSchema, RegisterWalkerInput, loginUser, registerCustomer, registerWalker } from '../api/authApi';
 
 type Tab = 'login' | 'register' | 'walker';
 
@@ -30,6 +27,8 @@ export const AuthPage: React.FC = () => {
   const initialTab = (searchParams.get('tab') as Tab) || 'login';
   const [tab, setTab] = useState<Tab>(initialTab);
   const [step, setStep] = useState<1 | 2>(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<RegisterWalkerInput & { password_confirm?: string }>({
     full_name: '',
@@ -49,17 +48,13 @@ export const AuthPage: React.FC = () => {
     setTab(newTab);
     setStep(1);
     setErrors([]);
+    setSuccessMessage(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors([]);
-
-    if (tab === 'login') {
-      // HACK: Mock login bypass for demo — replace with real JWT call
-      navigate('/search');
-      return;
-    }
+    setSuccessMessage(null);
 
     if (step === 1 && (tab === 'register' || tab === 'walker')) {
       if (!formData.full_name.trim() || !formData.cuil.trim()) {
@@ -70,14 +65,42 @@ export const AuthPage: React.FC = () => {
       return;
     }
 
-    const result = registerWalkerSchema.safeParse(formData);
-    if (!result.success) {
-      setErrors(result.error.errors.map((e) => e.message));
-      return;
+    if (tab === 'register' || tab === 'walker') {
+      const result = registerWalkerSchema.safeParse(formData);
+      if (!result.success) {
+        setErrors(result.error.errors.map((e) => e.message));
+        return;
+      }
+      if (formData.password !== formData.password_confirm) {
+        setErrors(['Las contraseñas no coinciden.']);
+        return;
+      }
     }
 
-    // TODO: Call POST /auth/register endpoint
-    navigate('/search');
+    setIsSubmitting(true);
+
+    try {
+      if (tab === 'login') {
+        const res = await loginUser({ email: formData.email, password: formData.password });
+        setSuccessMessage('¡Inicio de sesión exitoso! Redirigiendo a la plataforma...');
+        localStorage.setItem('auth_token', res.access_token);
+        setTimeout(() => navigate('/search'), 1000);
+      } else if (tab === 'register') {
+        const res = await registerCustomer(formData);
+        setSuccessMessage('¡Cuenta de cliente creada exitosamente! Conectando...');
+        localStorage.setItem('auth_token', res.access_token);
+        setTimeout(() => navigate('/search'), 1000);
+      } else {
+        const res = await registerWalker(formData);
+        setSuccessMessage('¡Registro de paseador exitoso! Bienvenido a la red.');
+        localStorage.setItem('auth_token', res.access_token);
+        setTimeout(() => navigate('/search'), 1000);
+      }
+    } catch (err: any) {
+      setErrors([err.message || 'Ocurrió un error al procesar la solicitud.']);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
@@ -191,6 +214,16 @@ export const AuthPage: React.FC = () => {
                     />
                   </div>
 
+                  {successMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="rounded-xl border border-[#498300]/30 bg-[#e7f6d5] p-3 flex items-center gap-2 text-xs font-bold text-[#498300] font-headline"
+                    >
+                      <CheckCircle2 className="w-4 h-4 shrink-0" /> {successMessage}
+                    </motion.div>
+                  )}
+
                   {errors.length > 0 && (
                     <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
                       <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
@@ -203,10 +236,19 @@ export const AuthPage: React.FC = () => {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
                     type="submit"
                     className="btn-brand w-full py-3.5 mt-2 flex items-center justify-center gap-2"
                   >
-                    ¡Ingresar a la plataforma! <ArrowRight className="w-4 h-4" />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" /> Conectando API...
+                      </>
+                    ) : (
+                      <>
+                        ¡Ingresar a la plataforma! <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </motion.button>
                 </motion.div>
               ) : (
@@ -321,6 +363,16 @@ export const AuthPage: React.FC = () => {
                         />
                       </div>
 
+                      {successMessage && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="rounded-xl border border-[#498300]/30 bg-[#e7f6d5] p-3 flex items-center gap-2 text-xs font-bold text-[#498300] font-headline"
+                        >
+                          <CheckCircle2 className="w-4 h-4 shrink-0" /> {successMessage}
+                        </motion.div>
+                      )}
+
                       {errors.length > 0 && (
                         <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
                           <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
@@ -341,10 +393,17 @@ export const AuthPage: React.FC = () => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
+                          disabled={isSubmitting}
                           type="submit"
-                          className="btn-brand flex-1 py-3.5 text-xs font-headline"
+                          className="btn-brand flex-1 py-3.5 text-xs font-headline flex items-center justify-center gap-2"
                         >
-                          ¡Crear mi cuenta!
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" /> Registrando...
+                            </>
+                          ) : (
+                            '¡Crear mi cuenta!'
+                          )}
                         </motion.button>
                       </div>
                     </>
