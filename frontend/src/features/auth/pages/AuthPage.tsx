@@ -109,7 +109,8 @@ export const AuthPage: React.FC = () => {
         setTimeout(() => navigate('/search'), 1000);
       }
     } catch (err: any) {
-      setErrors([err.message || 'Ocurrió un error al procesar la solicitud.']);
+      const serverMsg = err.response?.data?.error || err.message || 'Ocurrió un error al procesar la solicitud.';
+      setErrors([serverMsg]);
     } finally {
       setIsSubmitting(false);
     }

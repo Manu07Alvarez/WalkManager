@@ -4,6 +4,7 @@ use axum::{
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -30,72 +31,79 @@ pub struct WalkerProfileResponse {
     pub available_days: Vec<String>,
 }
 
+static PROFILE_STORE: Mutex<Option<WalkerProfileResponse>> = Mutex::new(None);
+
+fn get_or_init_profile() -> WalkerProfileResponse {
+    let mut guard = PROFILE_STORE.lock().unwrap();
+    if guard.is_none() {
+        *guard = Some(WalkerProfileResponse {
+            id: "me-profile".to_string(),
+            name: "Santiago Martínez".to_string(),
+            zone: "Palermo, CABA".to_string(),
+            description: "Paseador certificado con 5 años de experiencia.".to_string(),
+            max_dogs: 3,
+            price_per_service: 2500.0,
+            dog_types: "Grandes, medianos".to_string(),
+            available_days: vec![
+                "Lunes".to_string(),
+                "Miércoles".to_string(),
+                "Viernes".to_string(),
+                "Sábado".to_string(),
+            ],
+        });
+    }
+    guard.as_ref().unwrap().clone()
+}
+
 async fn update_my_profile(
     Json(payload): Json<UpdateProfilePayload>,
 ) -> Json<WalkerProfileResponse> {
-    let name = payload.name.unwrap_or_else(|| "Paseador Verificado".to_string());
-    let zone = payload.zone.unwrap_or_else(|| "Palermo, CABA".to_string());
-    let description = payload.description.unwrap_or_else(|| {
-        "Paseador profesional en Palermo. Amante de los perros con experiencia.".to_string()
-    });
-    let max_dogs = payload.max_dogs.unwrap_or(3);
-    let price_per_service = payload.price_per_service.unwrap_or(2500.0);
-    let dog_types = payload.dog_types.unwrap_or_else(|| "Grandes, medianos, pequeños".to_string());
-    let available_days = payload.available_days.unwrap_or_else(|| {
-        vec![
-            "Lunes".to_string(),
-            "Miércoles".to_string(),
-            "Viernes".to_string(),
-            "Sábado".to_string(),
-        ]
-    });
+    let mut guard = PROFILE_STORE.lock().unwrap();
+    if guard.is_none() {
+        drop(guard);
+        get_or_init_profile();
+        guard = PROFILE_STORE.lock().unwrap();
+    }
 
-    Json(WalkerProfileResponse {
-        id: "me-profile".to_string(),
-        name,
-        zone,
-        description,
-        max_dogs,
-        price_per_service,
-        dog_types,
-        available_days,
-    })
+    if let Some(prof) = guard.as_mut() {
+        if let Some(n) = payload.name {
+            if !n.trim().is_empty() {
+                prof.name = n;
+            }
+        }
+        if let Some(z) = payload.zone {
+            if !z.trim().is_empty() {
+                prof.zone = z;
+            }
+        }
+        if let Some(d) = payload.description {
+            prof.description = d;
+        }
+        if let Some(md) = payload.max_dogs {
+            prof.max_dogs = md;
+        }
+        if let Some(p) = payload.price_per_service {
+            prof.price_per_service = p;
+        }
+        if let Some(dt) = payload.dog_types {
+            prof.dog_types = dt;
+        }
+        if let Some(ad) = payload.available_days {
+            prof.available_days = ad;
+        }
+    }
+
+    Json(guard.as_ref().unwrap().clone())
 }
 
 async fn get_my_profile() -> Json<WalkerProfileResponse> {
-    Json(WalkerProfileResponse {
-        id: "me-profile".to_string(),
-        name: "Santiago Martínez".to_string(),
-        zone: "Palermo, CABA".to_string(),
-        description: "Paseador certificado con 5 años de experiencia.".to_string(),
-        max_dogs: 3,
-        price_per_service: 2500.0,
-        dog_types: "Grandes, medianos".to_string(),
-        available_days: vec![
-            "Lunes".to_string(),
-            "Miércoles".to_string(),
-            "Viernes".to_string(),
-            "Sábado".to_string(),
-        ],
-    })
+    Json(get_or_init_profile())
 }
 
 async fn get_public_profile(Path(walker_id): Path<String>) -> Json<WalkerProfileResponse> {
-    Json(WalkerProfileResponse {
-        id: walker_id,
-        name: "Santiago Martínez".to_string(),
-        zone: "Palermo, CABA".to_string(),
-        description: "Paseador certificado con 5 años de experiencia.".to_string(),
-        max_dogs: 3,
-        price_per_service: 2500.0,
-        dog_types: "Grandes, medianos".to_string(),
-        available_days: vec![
-            "Lunes".to_string(),
-            "Miércoles".to_string(),
-            "Viernes".to_string(),
-            "Sábado".to_string(),
-        ],
-    })
+    let mut profile = get_or_init_profile();
+    profile.id = walker_id;
+    Json(profile)
 }
 
 pub fn walker_profiles_routes() -> Router {

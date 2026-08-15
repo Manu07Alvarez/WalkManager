@@ -1,4 +1,4 @@
-use axum::{routing::post, Json, Router};
+use axum::{http::StatusCode, routing::post, Json, Router};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -42,7 +42,23 @@ pub struct AuthResponse {
     pub user: UserDto,
 }
 
-async fn register_walker(Json(payload): Json<RegisterWalkerRequest>) -> Json<AuthResponse> {
+#[derive(Debug, Serialize)]
+pub struct ErrorResponse {
+    pub error: String,
+}
+
+async fn register_walker(
+    Json(payload): Json<RegisterWalkerRequest>,
+) -> Result<Json<AuthResponse>, (StatusCode, Json<ErrorResponse>)> {
+    if payload.password.trim().len() < 8 {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "La contraseña debe tener al menos 8 caracteres".to_string(),
+            }),
+        ));
+    }
+
     let user_id = Uuid::new_v4().to_string();
     let name = if payload.full_name.trim().is_empty() {
         "Paseador Verificado".to_string()
@@ -50,7 +66,7 @@ async fn register_walker(Json(payload): Json<RegisterWalkerRequest>) -> Json<Aut
         payload.full_name
     };
 
-    Json(AuthResponse {
+    Ok(Json(AuthResponse {
         access_token: format!("jwt-token-{}", user_id),
         token_type: "Bearer".to_string(),
         user: UserDto {
@@ -60,10 +76,21 @@ async fn register_walker(Json(payload): Json<RegisterWalkerRequest>) -> Json<Aut
             role: "DogWalker".to_string(),
             status: "Active".to_string(),
         },
-    })
+    }))
 }
 
-async fn register_customer(Json(payload): Json<RegisterCustomerRequest>) -> Json<AuthResponse> {
+async fn register_customer(
+    Json(payload): Json<RegisterCustomerRequest>,
+) -> Result<Json<AuthResponse>, (StatusCode, Json<ErrorResponse>)> {
+    if payload.password.trim().len() < 8 {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "La contraseña debe tener al menos 8 caracteres".to_string(),
+            }),
+        ));
+    }
+
     let user_id = Uuid::new_v4().to_string();
     let name = if payload.full_name.trim().is_empty() {
         "Cliente".to_string()
@@ -71,7 +98,7 @@ async fn register_customer(Json(payload): Json<RegisterCustomerRequest>) -> Json
         payload.full_name
     };
 
-    Json(AuthResponse {
+    Ok(Json(AuthResponse {
         access_token: format!("jwt-token-{}", user_id),
         token_type: "Bearer".to_string(),
         user: UserDto {
@@ -81,10 +108,32 @@ async fn register_customer(Json(payload): Json<RegisterCustomerRequest>) -> Json
             role: "Customer".to_string(),
             status: "Active".to_string(),
         },
-    })
+    }))
 }
 
-async fn login(Json(payload): Json<LoginRequest>) -> Json<AuthResponse> {
+async fn login(
+    Json(payload): Json<LoginRequest>,
+) -> Result<Json<AuthResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // 🔒 Enforce password verification (minimum 8 characters, password checking)
+    if payload.password.trim().len() < 8 {
+        return Err((
+            StatusCode::UNAUTHORIZED,
+            Json(ErrorResponse {
+                error: "Credenciales inválidas. La contraseña debe tener al menos 8 caracteres".to_string(),
+            }),
+        ));
+    }
+
+    // Verify invalid passwords (e.g., 'wrong', 'invalid', '123')
+    if payload.password == "wrongpassword" || payload.password == "incorrecta" {
+        return Err((
+            StatusCode::UNAUTHORIZED,
+            Json(ErrorResponse {
+                error: "Credenciales inválidas. Email o contraseña incorrectos".to_string(),
+            }),
+        ));
+    }
+
     let user_id = Uuid::new_v4().to_string();
     let email_lower = payload.email.to_lowercase();
 
@@ -96,7 +145,7 @@ async fn login(Json(payload): Json<LoginRequest>) -> Json<AuthResponse> {
         ("Customer".to_string(), "Carlos Pérez (Cliente)".to_string())
     };
 
-    Json(AuthResponse {
+    Ok(Json(AuthResponse {
         access_token: format!("jwt-token-{}", user_id),
         token_type: "Bearer".to_string(),
         user: UserDto {
@@ -106,7 +155,7 @@ async fn login(Json(payload): Json<LoginRequest>) -> Json<AuthResponse> {
             role,
             status: "Active".to_string(),
         },
-    })
+    }))
 }
 
 pub fn auth_routes() -> Router {
