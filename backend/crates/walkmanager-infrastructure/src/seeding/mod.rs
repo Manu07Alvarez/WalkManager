@@ -153,11 +153,17 @@ pub async fn seed_database(
             customer_id: Set(customer_id),
             walker_id: Set(walker_user_id),
             dog_count: Set(1 + (idx % 2) as i32),
-            start_time: Set(Utc::now() + chrono::Duration::hours(idx as i64 * 2)),
-            end_time: Set(Utc::now() + chrono::Duration::hours(idx as i64 * 2 + 1)),
+            start_time: Set((Utc::now() + chrono::Duration::hours(idx as i64 * 2)).into()),
+            end_time: Set((Utc::now() + chrono::Duration::hours(idx as i64 * 2 + 1)).into()),
             status: Set(status.to_string()),
-            created_at: Set(Utc::now()),
-            updated_at: Set(Utc::now()),
+            service_result: Set(if status == "Completed" {
+                Some("Successful".to_string())
+            } else {
+                None
+            }),
+            total_price: Set(2500.0 + (idx as f64 * 50.0)),
+            created_at: Set(Utc::now().into()),
+            updated_at: Set(Utc::now().into()),
         };
         b.insert(db).await?;
         bookings_created += 1;
@@ -181,7 +187,7 @@ pub async fn seed_database(
                 idx + 1
             )),
             moderation_status: Set("Approved".to_string()),
-            created_at: Set(Utc::now()),
+            created_at: Set(Utc::now().into()),
         };
         rev.insert(db).await?;
         reviews_created += 1;
