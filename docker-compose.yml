@@ -59,12 +59,12 @@ services:
     image: chrislusf/seaweedfs:latest
     container_name: walkmanager-seaweedfs
     restart: unless-stopped
-    command: "server -dir=/data -master.port=9333 -volume.port=8080 -filer=true -filer.port=8888 -s3=true -s3.port=8333"
+    command: "server -dir=/data -master.port=9333 -volume.port=18080 -filer=true -filer.port=8888 -s3=true -s3.port=8333"
     ports:
-      - "${SEAWEEDFS_MASTER_PORT:-9333}:9333"  # Master HTTP
-      - "${SEAWEEDFS_FILER_PORT:-8888}:8888"   # Filer HTTP
-      - "${SEAWEEDFS_S3_PORT:-8333}:8333"       # S3 Compatible API
-      - "${SEAWEEDFS_VOLUME_PORT:-18080}:8080"  # Volume Server HTTP (Host 18080 to avoid collision with Backend 8080)
+      - "9333:9333"   # Master HTTP
+      - "8888:8888"   # Filer HTTP
+      - "8333:8333"   # S3 Compatible API
+      - "18080:18080" # Volume Server HTTP (Port 18080 to avoid collision with Backend 8080)
     volumes:
       - seaweedfs_data:/data
     healthcheck:

@@ -32,67 +32,16 @@ export interface AuthResponseData {
 }
 
 export async function loginUser(input: LoginInput): Promise<AuthResponseData> {
-  try {
-    const response = await apiClient.post('/v1/auth/login', input);
-    return response.data;
-  } catch (error) {
-    const isWalker = input.email.includes('walker');
-    const isMod = input.email.includes('mod') || input.email.includes('admin');
-    const role = isWalker ? 'DogWalker' : isMod ? 'Moderator' : 'Customer';
-    const full_name = isWalker
-      ? 'Lucas González (Paseador)'
-      : isMod
-      ? 'Moderador WalkManager'
-      : 'Carlos Pérez (Cliente)';
-
-    return {
-      access_token: 'mock-jwt-token-dev',
-      token_type: 'Bearer',
-      user: {
-        id: '11111111-1111-1111-1111-111111111111',
-        full_name,
-        email: input.email,
-        role,
-        status: 'Active',
-      },
-    };
-  }
+  const response = await apiClient.post('/v1/auth/login', input);
+  return response.data;
 }
 
 export async function registerWalker(input: RegisterWalkerInput): Promise<AuthResponseData> {
-  try {
-    const response = await apiClient.post('/v1/auth/register/walker', input);
-    return response.data;
-  } catch (error) {
-    return {
-      access_token: 'mock-jwt-token-dev',
-      token_type: 'Bearer',
-      user: {
-        id: '22222222-2222-2222-2222-222222222222',
-        full_name: input.full_name || 'Paseador Verificado',
-        email: input.email,
-        role: 'DogWalker',
-        status: 'Active',
-      },
-    };
-  }
+  const response = await apiClient.post('/v1/auth/register/walker', input);
+  return response.data;
 }
 
 export async function registerCustomer(input: RegisterWalkerInput): Promise<AuthResponseData> {
-  try {
-    const response = await apiClient.post('/v1/auth/register/customer', input);
-    return response.data;
-  } catch (error) {
-    return {
-      access_token: 'mock-jwt-token-dev',
-      token_type: 'Bearer',
-      user: {
-        id: '33333333-3333-3333-3333-333333333333',
-        full_name: input.full_name || 'Cliente',
-        email: input.email,
-        role: 'Customer',
-        status: 'Active',
-      },
-    };
-  }
+  const response = await apiClient.post('/v1/auth/register/customer', input);
+  return response.data;
 }
