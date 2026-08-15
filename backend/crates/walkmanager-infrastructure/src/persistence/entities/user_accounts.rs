@@ -11,6 +11,7 @@ pub struct Model {
     pub phone_number: String,
     pub full_name: String,
     pub cuil: String,
+    pub password_hash: String,
     pub status: String,
     pub created_at: DateTimeWithTimeZone,
 }

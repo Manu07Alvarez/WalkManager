@@ -6,6 +6,7 @@ edition.workspace = true
 [dependencies]
 walkmanager-domain = { path = "../walkmanager-domain" }
 walkmanager-application = { path = "../walkmanager-application" }
+walkmanager-migration = { path = "./migration" }
 serde.workspace = true
 tokio.workspace = true
 uuid = { workspace = true, features = ["v4"] }
