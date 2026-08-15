@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Calendar, Clock, MapPin, Dog, Check, X, CheckCircle2, Clock3, XCircle, AlertCircle } from 'lucide-react';
 
 // TODO: Connect to GET /bookings and PATCH /bookings/:id/accept|reject endpoints
 // REVIEW: Add real-time status update via WebSocket subscription
@@ -48,12 +49,20 @@ const statusBadge: Record<BookingStatus, string> = {
   Cancelled: 'badge-expired',
 };
 
+const statusIcon: Record<BookingStatus, React.ElementType> = {
+  Pending:   Clock3,
+  Accepted:  CheckCircle2,
+  Rejected:  XCircle,
+  Expired:   AlertCircle,
+  Cancelled: XCircle,
+};
+
 const statusLabel: Record<BookingStatus, string> = {
-  Pending:   '⏳ Pendiente',
-  Accepted:  '✅ Aceptada',
-  Rejected:  '❌ Rechazada',
-  Expired:   '⏱ Expirada',
-  Cancelled: '🚫 Cancelada',
+  Pending:   'Pendiente',
+  Accepted:  'Aceptada',
+  Rejected:  'Rechazada',
+  Expired:   'Expirada',
+  Cancelled: 'Cancelada',
 };
 
 type FilterTab = 'all' | BookingStatus;
@@ -79,11 +88,13 @@ export const BookingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 animate-fade-in">
+    <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6 animate-fade-in font-body">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">📅 Mis Reservas</h1>
-        <p className="text-sm text-zinc-500 mt-1">
-          Gestión del ciclo de vida de reservas · {bookings.length} total
+        <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#005da7] flex items-center gap-3">
+          <Calendar className="w-8 h-8 text-[#005da7]" /> Mis Reservas
+        </h1>
+        <p className="text-sm text-[#414751] mt-1 font-body">
+          Gestión transparente del ciclo de vida de reservas · {bookings.length} reservas registradas
         </p>
       </div>
 
@@ -93,10 +104,10 @@ export const BookingsPage: React.FC = () => {
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold font-headline border transition-all duration-200 ${
               filter === f.key
-                ? 'bg-brand-500/20 border-brand-500/40 text-brand-400'
-                : 'border-white/10 text-zinc-500 hover:text-zinc-300 hover:border-white/20'
+                ? 'bg-[#005da7] border-[#005da7] text-white shadow-sm'
+                : 'border-[#dde4e6] bg-white text-[#414751] hover:text-[#005da7] hover:border-[#005da7]/30'
             }`}
           >
             {f.label}
@@ -105,54 +116,63 @@ export const BookingsPage: React.FC = () => {
       </div>
 
       {/* Booking list */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filtered.length === 0 ? (
-          <div className="glass-card p-10 text-center">
-            <p className="text-4xl mb-3">📭</p>
-            <p className="text-zinc-400 text-sm">No hay reservas en esta categoría.</p>
+          <div className="card-connection p-12 text-center bg-white border-[#dde4e6]">
+            <Dog className="w-12 h-12 text-[#414751] mx-auto mb-3 opacity-40" />
+            <p className="font-headline font-bold text-lg text-[#161d1f]">Ruh-roh! No hay reservas en esta categoría.</p>
           </div>
         ) : (
-          filtered.map((booking) => (
-            <div key={booking.id} className="glass-card p-5 hover:border-white/10 transition-all duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-zinc-600">{booking.id}</span>
-                    <span className={`badge ${statusBadge[booking.status]}`}>
-                      {statusLabel[booking.status]}
-                    </span>
-                  </div>
-                  <p className="font-semibold text-white text-sm">
-                    🦮 {booking.walkerName} → 🐶 {booking.customerName}
-                  </p>
-                  <p className="text-xs text-zinc-500">
-                    📅 {booking.date} · 🕐 {booking.time} · 📍 {booking.zone} · {booking.dogCount} perro{booking.dogCount !== 1 ? 's' : ''}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-lg font-bold text-gradient">
-                    ${booking.price.toLocaleString()}
-                  </span>
-                  {booking.status === 'Pending' && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleAccept(booking.id)}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/25 transition-colors"
-                      >
-                        ✓ Aceptar
-                      </button>
-                      <button
-                        onClick={() => handleReject(booking.id)}
-                        className="px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/25 text-rose-400 text-xs font-semibold hover:bg-rose-500/25 transition-colors"
-                      >
-                        ✗ Rechazar
-                      </button>
+          filtered.map((booking) => {
+            const StatusIcon = statusIcon[booking.status];
+            return (
+              <div key={booking.id} className="card-connection p-6 bg-white border-[#dde4e6] hover:shadow-level2 transition-all duration-200">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-mono font-bold text-[#414751]">{booking.id}</span>
+                      <span className={`badge ${statusBadge[booking.status]}`}>
+                        <StatusIcon className="w-3.5 h-3.5" />
+                        {statusLabel[booking.status]}
+                      </span>
                     </div>
-                  )}
+                    <p className="font-headline font-bold text-[#161d1f] text-base flex items-center gap-2">
+                      <span>Paseador: {booking.walkerName}</span>
+                      <span className="text-[#414751] font-normal">→</span>
+                      <span>Cliente: {booking.customerName}</span>
+                    </p>
+                    <p className="text-xs text-[#414751] flex flex-wrap items-center gap-3 font-body">
+                      <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#005da7]" /> {booking.date}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-[#005da7]" /> {booking.time}</span>
+                      <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-[#005da7]" /> {booking.zone}</span>
+                      <span className="flex items-center gap-1"><Dog className="w-3.5 h-3.5 text-[#005da7]" /> {booking.dogCount} perro{booking.dogCount !== 1 ? 's' : ''}</span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="text-xl font-headline font-bold text-[#005da7]">
+                      ${booking.price.toLocaleString()}
+                    </span>
+                    {booking.status === 'Pending' && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleAccept(booking.id)}
+                          className="px-3.5 py-2 rounded-xl bg-[#f9ffeb] border border-[#498300]/40 text-[#2a5000] text-xs font-bold font-headline hover:bg-[#498300]/20 transition-colors flex items-center gap-1"
+                        >
+                          <Check className="w-3.5 h-3.5" /> ¡Aceptar!
+                        </button>
+                        <button
+                          onClick={() => handleReject(booking.id)}
+                          className="px-3.5 py-2 rounded-xl bg-[#ffdad6] border border-[#ba1a1a]/40 text-[#93000a] text-xs font-bold font-headline hover:bg-[#ba1a1a]/20 transition-colors flex items-center gap-1"
+                        >
+                          <X className="w-3.5 h-3.5" /> Rechazar
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

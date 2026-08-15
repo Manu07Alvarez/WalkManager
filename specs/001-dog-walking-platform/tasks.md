@@ -26,7 +26,7 @@
 - [X] T006 [P] Add Application crate dependencies for async traits, validation helpers, time handling, domain error mapping, and serde contracts in `backend/crates/walkmanager-application/Cargo.toml`
 - [X] T007 [P] Add Infrastructure crate dependencies for SeaORM, SeaORM migrations, PostgreSQL/PostGIS support, SeaweedFS integration, DragonflyDB integration, and background workers in `backend/crates/walkmanager-infrastructure/Cargo.toml`
 - [X] T008 [P] Add Domain crate dependencies for time/value-object support and test utilities in `backend/crates/walkmanager-domain/Cargo.toml`
-- [] T009 [P] Add frontend dependency packages for React, Tailwind CSS, Lucide Icons (`lucide-react`), `motion` (Framer Motion), `pretext`, TanStack Query, React Hook Form, Zod, and WebSocket client utilities in `frontend/package.json`
+- [x] T009 [P] Add frontend dependency packages for React, Tailwind CSS, Lucide Icons (`lucide-react`), `motion` (Framer Motion), `pretext`, TanStack Query, React Hook Form, Zod, and WebSocket client utilities in `frontend/package.json`
 - [X] T010 [P] Configure Rust formatting, clippy, and deny-warning policy in `backend/rustfmt.toml` and `backend/.cargo/config.toml`
 - [X] T011 [P] Configure frontend linting, formatting, and TypeScript rules in `frontend/eslint.config.js`, `frontend/prettier.config.js`, and `frontend/tsconfig.json`
 - [X] T012 [P] Create local environment template for PostgreSQL, DragonflyDB, SeaweedFS, JWT keys, and notification providers in `.env.example`

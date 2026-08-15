@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Search, Dog, Shield, Star, Calendar, MessageSquare, Bell } from 'lucide-react';
+import { Search, Dog, Shield, Star, Calendar, MessageSquare, Bell, Heart, ArrowRight } from 'lucide-react';
 
 // REVIEW: Add animated hero background with PostGIS map integration when available
 
@@ -9,7 +9,7 @@ const features = [
   {
     icon: Search,
     title: 'Búsqueda por Proximidad',
-    desc: 'Encuentra paseadores cercanos con filtros de distancia, precio y disponibilidad.',
+    desc: 'Encontrá paseadores cercanos con filtros de distancia, precio y disponibilidad.',
   },
   {
     icon: Calendar,
@@ -23,25 +23,25 @@ const features = [
   },
   {
     icon: Shield,
-    title: 'Moderación Interna',
-    desc: 'Sistema de incidentes y restricciones transparente para ambos roles.',
+    title: 'Moderación Transparente',
+    desc: 'Sistema de incidentes y restricciones claro y seguro para todos.',
   },
   {
     icon: MessageSquare,
     title: 'Chat en Tiempo Real',
-    desc: 'Conversaciones pre-reserva y chat específico por reserva con WebSockets.',
+    desc: 'Conversaciones pre-reserva y chat de seguimiento por paseo.',
   },
   {
     icon: Bell,
-    title: 'Notificaciones Multi-canal',
-    desc: 'Email o mensajería según tu preferencia. Actualizaciones de estado.',
+    title: 'Notificaciones Claras',
+    desc: 'Alertas por email o celular según tu preferencia en cada estado.',
   },
 ];
 
 const stats = [
-  { value: '< 2s', label: 'Tiempo de búsqueda' },
-  { value: '95%', label: 'Chat en 5 segundos' },
-  { value: '100%', label: 'Sin overbooking' },
+  { value: '< 2s', label: 'Búsqueda veloz' },
+  { value: '95%', label: 'Respuestas en < 5s' },
+  { value: '100%', label: 'Capacidad garantizada' },
   { value: '3 roles', label: 'Walker · Cliente · Moderador' },
 ];
 
@@ -49,21 +49,21 @@ export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#09090b] overflow-hidden">
+    <div className="min-h-screen bg-[#f4fafd] text-[#161d1f] overflow-hidden font-body">
       {/* Background decorations */}
-      <div className="fixed inset-0 bg-grid opacity-40 pointer-events-none" />
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-brand-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-[600px] h-[400px] bg-brand-700/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="fixed inset-0 bg-grid pointer-events-none" />
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#005da7]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-0 right-0 w-[600px] h-[400px] bg-[#feae2c]/10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Navbar */}
-      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/5">
+      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#dde4e6] bg-white/80 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white">
-            <Dog className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl bg-[#005da7] flex items-center justify-center text-white shadow-sm">
+            <Dog className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-lg font-bold text-gradient">WalkManager</span>
-            <p className="text-[10px] text-zinc-600 -mt-0.5 hidden md:block">Dog Walking Platform</p>
+            <span className="text-xl font-headline font-bold text-[#005da7]">WalkManager</span>
+            <p className="text-[11px] text-[#414751] font-body -mt-0.5 hidden md:block">The Reliable Best Friend</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -77,7 +77,7 @@ export const LandingPage: React.FC = () => {
             onClick={() => navigate('/auth?tab=register')}
             className="btn-brand text-sm"
           >
-            Registrarse
+            ¡Registrate gratis!
           </button>
         </div>
       </header>
@@ -87,29 +87,26 @@ export const LandingPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-24 md:pt-32 md:pb-40"
+        className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-20 md:pt-28 md:pb-32"
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.4 }}
-          className="inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-4 py-1.5 text-xs font-semibold text-brand-400 mb-8"
+          className="inline-flex items-center gap-2 rounded-full border border-[#feae2c]/50 bg-[#ffddb4] px-4 py-1.5 text-xs font-bold text-[#633f00] mb-6 shadow-sm font-headline"
         >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-500" />
-          </span>
-          Plataforma de paseadores verificados
+          <Heart className="w-4 h-4 text-[#835500] fill-current" />
+          Paseadores locales verificados y de confianza
         </motion.div>
 
-        <h1 className="max-w-3xl text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
-          Tu perro merece el
-          <span className="text-gradient"> mejor paseo</span>
+        <h1 className="max-w-3xl text-4xl md:text-6xl lg:text-7xl font-headline font-bold tracking-tight leading-[1.15] text-[#161d1f]">
+          Tu mejor amigo merece el
+          <span className="text-gradient"> paseo ideal</span>
         </h1>
 
-        <p className="mt-6 max-w-xl text-base md:text-lg text-zinc-400 leading-relaxed">
-          Conectamos dueños de mascotas con paseadores profesionales verificados.
-          Búsqueda por proximidad, reservas seguras y chat en tiempo real.
+        <p className="mt-6 max-w-xl text-base md:text-lg text-[#414751] leading-relaxed">
+          Conectamos dueños apasionados con paseadores profesionales verificados.
+          Búsqueda por proximidad, capacidad garantizada y reservas instantáneas.
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
@@ -119,13 +116,13 @@ export const LandingPage: React.FC = () => {
             onClick={() => navigate('/search')}
             className="btn-brand px-8 py-4 text-base flex items-center gap-2"
           >
-            <Search className="w-5 h-5" /> Buscar Paseadores
+            <Search className="w-5 h-5" /> ¡Buscar Paseadores!
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate('/auth?tab=walker')}
-            className="btn-ghost px-8 py-4 text-base flex items-center gap-2"
+            className="btn-secondary px-8 py-4 text-base flex items-center gap-2"
           >
             <Dog className="w-5 h-5" /> Soy Paseador
           </motion.button>
@@ -139,10 +136,10 @@ export const LandingPage: React.FC = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.1 }}
-              className="glass-card p-4 text-center"
+              className="card-connection p-5 text-center"
             >
-              <div className="text-2xl font-extrabold text-gradient">{stat.value}</div>
-              <div className="mt-1 text-xs text-zinc-500">{stat.label}</div>
+              <div className="text-2xl font-headline font-bold text-[#005da7]">{stat.value}</div>
+              <div className="mt-1 text-xs font-semibold text-[#414751]">{stat.label}</div>
             </motion.div>
           ))}
         </div>
@@ -152,15 +149,15 @@ export const LandingPage: React.FC = () => {
       <section className="relative z-10 px-6 md:px-12 pb-24">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
-              Todo lo que necesitás en una plataforma
+            <h2 className="text-2xl md:text-4xl font-headline font-bold text-[#161d1f]">
+              Todo pensado para la seguridad de tu mascota
             </h2>
-            <p className="mt-3 text-zinc-500 text-sm md:text-base">
-              Diseñado para ser confiable, transparente y seguro desde el día uno.
+            <p className="mt-3 text-[#414751] text-sm md:text-base">
+              Una experiencia clara, alegre y sin sorpresas.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f, i) => {
               const Icon = f.icon;
               return (
@@ -170,13 +167,13 @@ export const LandingPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="glass-card p-6 group hover:border-brand-500/20 transition-all duration-300"
+                  className="card-connection p-6 group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 mb-4 group-hover:scale-110 transition-transform duration-200">
-                    <Icon className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-2xl bg-[#005da7]/10 border border-[#005da7]/20 flex items-center justify-center text-[#005da7] mb-4 group-hover:scale-110 transition-transform duration-200">
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-white text-sm mb-2">{f.title}</h3>
-                  <p className="text-xs text-zinc-500 leading-relaxed">{f.desc}</p>
+                  <h3 className="font-headline font-bold text-[#161d1f] text-base mb-2">{f.title}</h3>
+                  <p className="text-xs text-[#414751] leading-relaxed">{f.desc}</p>
                 </motion.div>
               );
             })}
@@ -184,38 +181,38 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA Banner */}
       <section className="relative z-10 px-6 pb-24">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="max-w-2xl mx-auto glass-card p-10 text-center glow-sm"
+          className="max-w-2xl mx-auto card-connection p-10 text-center bg-gradient-to-b from-white to-[#eef5f7] border-[#005da7]/20"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#005da7] flex items-center justify-center text-white mx-auto mb-5 shadow-md">
             <Dog className="w-8 h-8" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-3">
-            ¿Listo para empezar?
+          <h2 className="text-3xl font-headline font-bold text-[#161d1f] mb-3">
+            ¡En marcha!
           </h2>
-          <p className="text-zinc-400 text-sm mb-8">
-            Registrate gratis y encontrá el paseador ideal para tu mascota hoy mismo.
+          <p className="text-[#414751] text-sm mb-8 max-w-md mx-auto">
+            Sumate hoy a WalkManager y regalale a tu perro paseos felices y seguros.
           </p>
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate('/auth?tab=register')}
-            className="btn-brand px-10 py-4 text-base"
+            className="btn-brand px-10 py-4 text-base flex items-center justify-center gap-2 mx-auto"
           >
-            Crear cuenta gratis →
+            ¡Empezar ahora! <ArrowRight className="w-5 h-5" />
           </motion.button>
         </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 px-6 py-6 text-center">
-        <p className="text-xs text-zinc-600">
-          © 2026 WalkManager · Dog Walking Platform · Todos los derechos reservados
+      <footer className="relative z-10 border-t border-[#dde4e6] bg-white px-6 py-6 text-center">
+        <p className="text-xs text-[#414751]">
+          © 2026 WalkManager · Canine Connection Design · Todos los derechos reservados
         </p>
       </footer>
     </div>

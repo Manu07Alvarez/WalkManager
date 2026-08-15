@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Dog, Key, UserCheck, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { registerWalkerSchema, RegisterWalkerInput } from '../api/authApi';
 
 // TODO: Connect to real auth API - currently uses mock validation only
@@ -46,52 +47,58 @@ export const AuthPage: React.FC = () => {
     navigate('/search');
   };
 
-  const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: 'login',    label: 'Iniciar sesión',    icon: '🔑' },
-    { key: 'register', label: 'Soy Cliente',       icon: '🐶' },
-    { key: 'walker',   label: 'Soy Paseador',      icon: '🦮' },
+  const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
+    { key: 'login',    label: 'Iniciar sesión', icon: Key },
+    { key: 'register', label: 'Soy Cliente',    icon: UserCheck },
+    { key: 'walker',   label: 'Soy Paseador',   icon: ShieldCheck },
   ];
 
   return (
-    <div className="min-h-screen bg-[#09090b] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#f4fafd] text-[#161d1f] flex items-center justify-center px-4 py-12 font-body">
       {/* Background */}
-      <div className="fixed inset-0 bg-grid opacity-30 pointer-events-none" />
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-brand-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="fixed inset-0 bg-grid opacity-50 pointer-events-none" />
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#005da7]/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative w-full max-w-md animate-slide-up">
         {/* Header */}
         <div className="text-center mb-8">
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 mb-6 text-zinc-500 hover:text-white transition-colors text-sm"
+            className="inline-flex items-center gap-2 mb-6 text-[#414751] hover:text-[#005da7] transition-colors text-sm font-semibold"
           >
-            ← Volver al inicio
+            <ArrowLeft className="w-4 h-4" /> Volver al inicio
           </button>
           <div className="flex items-center justify-center gap-3 mb-3">
-            <span className="text-4xl">🐾</span>
+            <div className="w-12 h-12 rounded-2xl bg-[#005da7] flex items-center justify-center text-white shadow-md">
+              <Dog className="w-7 h-7" />
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">WalkManager</h1>
-          <p className="text-sm text-zinc-500 mt-1">Tu plataforma de paseos profesionales</p>
+          <h1 className="text-3xl font-headline font-bold text-[#005da7]">WalkManager</h1>
+          <p className="text-sm text-[#414751] mt-1 font-body">Tu plataforma de paseos profesionales</p>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-8">
+        <div className="card-connection p-8 bg-white shadow-level2 border-[#dde4e6]">
           {/* Tabs */}
-          <div className="flex gap-1 p-1 rounded-xl bg-white/5 mb-8">
-            {tabs.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all duration-200 ${
-                  tab === t.key
-                    ? 'bg-brand-500 text-white shadow'
-                    : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                <span>{t.icon}</span>
-                <span className="hidden sm:inline">{t.label}</span>
-              </button>
-            ))}
+          <div className="flex gap-1.5 p-1.5 rounded-2xl bg-[#eef5f7] mb-8">
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const isActive = tab === t.key;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold font-headline transition-all duration-200 ${
+                    isActive
+                      ? 'bg-[#005da7] text-white shadow-sm'
+                      : 'text-[#414751] hover:text-[#005da7]'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{t.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Form */}
@@ -99,7 +106,7 @@ export const AuthPage: React.FC = () => {
             {(tab === 'register' || tab === 'walker') && (
               <>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Nombre completo</label>
+                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Nombre completo</label>
                   <input
                     name="full_name"
                     value={formData.full_name}
@@ -110,7 +117,7 @@ export const AuthPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">CUIL</label>
+                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">CUIL</label>
                   <input
                     name="cuil"
                     value={formData.cuil}
@@ -121,7 +128,7 @@ export const AuthPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Teléfono</label>
+                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Teléfono</label>
                   <input
                     name="phone_number"
                     value={formData.phone_number}
@@ -134,7 +141,7 @@ export const AuthPage: React.FC = () => {
             )}
 
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+              <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Email</label>
               <input
                 name="email"
                 type="email"
@@ -147,7 +154,7 @@ export const AuthPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Contraseña</label>
+              <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Contraseña</label>
               <input
                 name="password"
                 type="password"
@@ -161,7 +168,7 @@ export const AuthPage: React.FC = () => {
 
             {(tab === 'register' || tab === 'walker') && (
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Confirmar contraseña</label>
+                <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Confirmar contraseña</label>
                 <input
                   name="password_confirm"
                   type="password"
@@ -176,15 +183,16 @@ export const AuthPage: React.FC = () => {
 
             {/* Errors */}
             {errors.length > 0 && (
-              <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 space-y-1">
+              <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
+                <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
                 {errors.map((err, i) => (
-                  <p key={i} className="text-xs text-rose-400">• {err}</p>
+                  <p key={i} className="text-xs text-[#93000a]">• {err}</p>
                 ))}
               </div>
             )}
 
             <button type="submit" className="btn-brand w-full py-3.5 mt-2">
-              {tab === 'login' ? '→ Ingresar a la plataforma' : '→ Crear mi cuenta'}
+              {tab === 'login' ? '¡Ingresar a la plataforma!' : '¡Crear mi cuenta!'}
             </button>
           </form>
         </div>
