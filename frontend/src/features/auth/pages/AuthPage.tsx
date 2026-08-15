@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { Key, UserCheck, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { registerWalkerSchema, RegisterWalkerInput } from '../api/authApi';
 
@@ -77,121 +78,143 @@ export const AuthPage: React.FC = () => {
 
         {/* Card */}
         <div className="card-connection p-8 bg-white shadow-level2 border-[#dde4e6]">
-          {/* Tabs */}
-          <div className="flex gap-1.5 p-1.5 rounded-2xl bg-[#eef5f7] mb-8">
+          {/* Tabs with layout morph pill */}
+          <div className="relative flex gap-1.5 p-1.5 rounded-2xl bg-[#eef5f7] mb-8">
             {tabs.map((t) => {
               const Icon = t.icon;
               const isActive = tab === t.key;
               return (
                 <button
                   key={t.key}
+                  type="button"
                   onClick={() => setTab(t.key)}
-                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold font-headline transition-all duration-200 ${
-                    isActive
-                      ? 'bg-[#005da7] text-white shadow-sm'
-                      : 'text-[#414751] hover:text-[#005da7]'
+                  className={`relative flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold font-headline transition-colors duration-200 z-10 ${
+                    isActive ? 'text-white' : 'text-[#414751] hover:text-[#005da7]'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t.label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="auth-tab-pill"
+                      className="absolute inset-0 bg-[#005da7] rounded-xl shadow-sm -z-10"
+                      transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                    />
+                  )}
+                  <Icon className="w-4 h-4 relative z-10" />
+                  <span className="hidden sm:inline relative z-10">{t.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {(tab === 'register' || tab === 'walker') && (
-              <>
+          {/* Form with smooth animated transitions */}
+          <form onSubmit={handleSubmit}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={tab}
+                initial={{ opacity: 0, y: 10, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-4"
+              >
+                {(tab === 'register' || tab === 'walker') && (
+                  <>
+                    <div>
+                      <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Nombre completo</label>
+                      <input
+                        name="full_name"
+                        value={formData.full_name}
+                        onChange={handleChange}
+                        className="input-field"
+                        placeholder="Juan García"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">CUIL</label>
+                      <input
+                        name="cuil"
+                        value={formData.cuil}
+                        onChange={handleChange}
+                        className="input-field"
+                        placeholder="20-12345678-9"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Teléfono</label>
+                      <input
+                        name="phone_number"
+                        value={formData.phone_number}
+                        onChange={handleChange}
+                        className="input-field"
+                        placeholder="+54 11 1234-5678"
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div>
-                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Nombre completo</label>
+                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Email</label>
                   <input
-                    name="full_name"
-                    value={formData.full_name}
+                    name="email"
+                    type="email"
+                    value={formData.email}
                     onChange={handleChange}
                     className="input-field"
-                    placeholder="Juan García"
+                    placeholder="tu@email.com"
                     required
                   />
                 </div>
+
                 <div>
-                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">CUIL</label>
+                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Contraseña</label>
                   <input
-                    name="cuil"
-                    value={formData.cuil}
+                    name="password"
+                    type="password"
+                    value={formData.password}
                     onChange={handleChange}
                     className="input-field"
-                    placeholder="20-12345678-9"
+                    placeholder="••••••••"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Teléfono</label>
-                  <input
-                    name="phone_number"
-                    value={formData.phone_number}
-                    onChange={handleChange}
-                    className="input-field"
-                    placeholder="+54 11 1234-5678"
-                  />
-                </div>
-              </>
-            )}
 
-            <div>
-              <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Email</label>
-              <input
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="tu@email.com"
-                required
-              />
-            </div>
+                {(tab === 'register' || tab === 'walker') && (
+                  <div>
+                    <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Confirmar contraseña</label>
+                    <input
+                      name="password_confirm"
+                      type="password"
+                      value={formData.password_confirm}
+                      onChange={handleChange}
+                      className="input-field"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                )}
 
-            <div>
-              <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Contraseña</label>
-              <input
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="••••••••"
-                required
-              />
-            </div>
+                {/* Errors */}
+                {errors.length > 0 && (
+                  <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
+                    <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
+                    {errors.map((err, i) => (
+                      <p key={i} className="text-xs text-[#93000a]">• {err}</p>
+                    ))}
+                  </div>
+                )}
 
-            {(tab === 'register' || tab === 'walker') && (
-              <div>
-                <label className="block text-xs font-bold text-[#161d1f] mb-1.5 font-headline">Confirmar contraseña</label>
-                <input
-                  name="password_confirm"
-                  type="password"
-                  value={formData.password_confirm}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-            )}
-
-            {/* Errors */}
-            {errors.length > 0 && (
-              <div className="rounded-xl border border-[#ba1a1a]/30 bg-[#ffdad6] p-4 space-y-1">
-                <p className="text-xs font-bold text-[#93000a] font-headline">Ruh-roh! Revisá estos campos:</p>
-                {errors.map((err, i) => (
-                  <p key={i} className="text-xs text-[#93000a]">• {err}</p>
-                ))}
-              </div>
-            )}
-
-            <button type="submit" className="btn-brand w-full py-3.5 mt-2">
-              {tab === 'login' ? '¡Ingresar a la plataforma!' : '¡Crear mi cuenta!'}
-            </button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  className="btn-brand w-full py-3.5 mt-2"
+                >
+                  {tab === 'login' ? '¡Ingresar a la plataforma!' : '¡Crear mi cuenta!'}
+                </motion.button>
+              </motion.div>
+            </AnimatePresence>
           </form>
         </div>
       </div>
