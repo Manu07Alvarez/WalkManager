@@ -1,8 +1,7 @@
 use axum::{extract::Query, Json};
+use redis::AsyncCommands;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::sync::Mutex;
-use std::time::{Duration, Instant};
+use tracing::info;
 
 #[derive(Debug, Deserialize)]
 pub struct SearchQueryParams {
@@ -12,7 +11,7 @@ pub struct SearchQueryParams {
     pub max_dog_size: Option<String>,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct WalkerItem {
     pub id: String,
     pub full_name: String,
@@ -25,20 +24,19 @@ pub struct WalkerItem {
     pub public_description: String,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SearchResultResponse {
     pub walkers: Vec<WalkerItem>,
 }
 
-// 🚀 Server-side Geospatial Search Cache
-static GEO_SEARCH_CACHE: Mutex<Option<HashMap<String, (Instant, SearchResultResponse)>>> = Mutex::new(None);
-const CACHE_DURATION: Duration = Duration::from_secs(60);
+const DRAGONFLY_URL: &str = "redis://127.0.0.1:6379";
+const CACHE_TTL_SECONDS: u64 = 60;
 
 fn build_cache_key(params: &SearchQueryParams) -> String {
     let lat = params.latitude.unwrap_or(-34.5889);
     let lng = params.longitude.unwrap_or(-58.4306);
     let radius = params.radius_km.unwrap_or(5.0);
-    format!("{:.3}_{:.3}_{:.1}", lat, lng, radius)
+    format!("geo_search:{:.3}:{:.3}:{:.1}", lat, lng, radius)
 }
 
 pub async fn search_walkers_handler(
@@ -46,19 +44,20 @@ pub async fn search_walkers_handler(
 ) -> Json<SearchResultResponse> {
     let cache_key = build_cache_key(&params);
 
-    {
-        let mut guard = GEO_SEARCH_CACHE.lock().unwrap();
-        if guard.is_none() {
-            *guard = Some(HashMap::new());
-        }
-        if let Some(map) = guard.as_mut() {
-            if let Some((created, cached_res)) = map.get(&cache_key) {
-                if created.elapsed() < CACHE_DURATION {
-                    return Json(cached_res.clone());
+    // 🚀 1. Try to fetch cached result from DragonflyDB (Redis protocol)
+    if let Ok(client) = redis::Client::open(DRAGONFLY_URL) {
+        if let Ok(mut con) = client.get_tokio_connection().await {
+            let cached_json: Result<String, _> = con.get(&cache_key).await;
+            if let Ok(json_str) = cached_json {
+                if let Ok(cached_res) = serde_json::from_str::<SearchResultResponse>(&json_str) {
+                    info!("DragonflyDB Cache HIT for key {}", cache_key);
+                    return Json(cached_res);
                 }
             }
         }
     }
+
+    info!("DragonflyDB Cache MISS for key {}", cache_key);
 
     let radius_km = params.radius_km.unwrap_or(5.0);
 
@@ -100,10 +99,13 @@ pub async fn search_walkers_handler(
 
     let result = SearchResultResponse { walkers: mock_walkers };
 
-    {
-        let mut guard = GEO_SEARCH_CACHE.lock().unwrap();
-        if let Some(map) = guard.as_mut() {
-            map.insert(cache_key, (Instant::now(), result.clone()));
+    // 🚀 2. Store search result in DragonflyDB with 60s TTL
+    if let Ok(json_str) = serde_json::to_string(&result) {
+        if let Ok(client) = redis::Client::open(DRAGONFLY_URL) {
+            if let Ok(mut con) = client.get_tokio_connection().await {
+                let _: Result<(), _> = con.set_ex(&cache_key, json_str, CACHE_TTL_SECONDS).await;
+                info!("Stored search result in DragonflyDB key {} with TTL 60s", cache_key);
+            }
         }
     }
 

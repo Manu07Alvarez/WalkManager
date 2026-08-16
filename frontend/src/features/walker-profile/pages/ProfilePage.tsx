@@ -48,11 +48,17 @@ export const ProfilePage: React.FC = () => {
     const cached = localStorage.getItem('user_profile_data');
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        return {
+          ...parsed,
+          name: user?.full_name || parsed.name,
+          email: user?.email || parsed.email,
+          role: user?.role || parsed.role,
+        };
       } catch {}
     }
     return {
-      name: user?.full_name || 'Usuario WalkManager',
+      name: user?.full_name || 'Usuario Registrado',
       email: user?.email || 'usuario@walkmanager.dev',
       role: user?.role || 'Customer',
       zone: 'Palermo, CABA',
@@ -69,6 +75,22 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     let isMounted = true;
+    const stored = localStorage.getItem('user_info');
+    let currentUser: AuthUser | null = null;
+    if (stored) {
+      try {
+        currentUser = JSON.parse(stored);
+        if (isMounted && currentUser) {
+          setUser(currentUser);
+          setProfile((prev: any) => ({
+            ...prev,
+            name: currentUser!.full_name,
+            email: currentUser!.email,
+            role: currentUser!.role,
+          }));
+        }
+      } catch {}
+    }
 
     fetchMyWalkerProfile()
       .then((data) => {
@@ -76,7 +98,9 @@ export const ProfilePage: React.FC = () => {
           setProfile((prev: any) => {
             const next = {
               ...prev,
-              name: data.name || prev.name,
+              name: currentUser?.full_name || data.name || prev.name,
+              email: currentUser?.email || prev.email,
+              role: currentUser?.role || prev.role,
               zone: data.zone || prev.zone,
               description: data.description || prev.description,
               maxDogs: data.maxDogs ?? prev.maxDogs,
@@ -89,15 +113,7 @@ export const ProfilePage: React.FC = () => {
           });
         }
       })
-      .catch(() => {
-        const stored = localStorage.getItem('user_info');
-        if (stored) {
-          try {
-            const u: AuthUser = JSON.parse(stored);
-            setUser(u);
-          } catch {}
-        }
-      });
+      .catch(() => {});
 
     return () => {
       isMounted = false;
@@ -161,7 +177,7 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  const schedules: Schedule[] = profile.availableDays.map((day: string) => ({
+  const schedules: Schedule[] = (profile.availableDays || []).map((day: string) => ({
     day,
     from: '08:00',
     to: '14:00',
@@ -339,7 +355,7 @@ export const ProfilePage: React.FC = () => {
             {/* Interactive Day Selection Grid */}
             <div className="grid grid-cols-7 gap-1.5 mb-5">
               {DAYS.map((day) => {
-                const active = profile.availableDays.includes(day);
+                const active = (profile.availableDays || []).includes(day);
                 return (
                   <button
                     key={day}
